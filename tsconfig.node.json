@@ -4,7 +4,18 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "checkJs": false
   },
-  "include": ["vite.config.ts", "plugins/**/*.ts","vitest.config.ts","scripts/**/*.ts"]
+  "include": [
+    "vite.config.ts",
+    "plugins/**/*.ts",
+    "vitest.config.ts",
+    "scripts/**/*.ts",
+    "vite.config.js",
+    "plugins/**/*.js",
+    "vitest.config.js",
+    "scripts/**/*.js"
+  ]
 }

@@ -15,10 +15,14 @@
     "jsx": "preserve",
     "jsxImportSource": "vue",
 
+    /* JavaScript Support */
+    "allowJs": true,
+    "checkJs": false,
+
     /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     // paths
     "baseUrl": ".",
@@ -29,6 +33,14 @@
       "~#/*": ["src/enums/*"],
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "types/**/*.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "types/**/*.d.ts",
+    "src/**/*.js",
+    "src/**/*.jsx"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
