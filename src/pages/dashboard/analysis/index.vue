@@ -26,6 +26,10 @@ const handleSexChange = () => {
   })
   // 执行其他业务逻辑
 };
+const arr = ref([
+  {title:"快捷筛选",arr:[{id:1,name:"今日待跟进"}]},
+  {title:"意向度",arr:[{id:2,name:"高"},{id:3,name:"中"}]}
+])
 </script>
 
 <template>
@@ -51,12 +55,14 @@ const handleSexChange = () => {
       <a-tag color="red">清空已选
         <DeleteOutlined />
       </a-tag>
-      <a-tag color="blue">快捷筛选：今日待跟进
-        <CloseOutlined style="cursor: pointer;" :style="{ fontSize: '10px' }" />
+      <a-tag v-for="(item,index) in arr" :key="index" color="blue">
+        <div class="flex" style="flex-wrap: nowrap;">{{item.title}}：<span v-for="(row,i) in item.arr" :key="i">{{row.name}} <span v-if="i<item.arr.length-1">、</span> </span>
+         <CloseOutlined style="cursor: pointer;" class="ml-1" :style="{ fontSize: '10px' }" />
+        </div>
       </a-tag>
-      <a-tag color="blue">渠道：场地预约、跨校办理
+      <!-- <a-tag color="blue">渠道：场地预约、跨校办理
         <CloseOutlined style="cursor: pointer;" :style="{ fontSize: '10px' }" />
-      </a-tag>
+      </a-tag> -->
     </div>
   </div>
 </template>
