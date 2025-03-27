@@ -225,12 +225,14 @@ v-deep .ant-picker-cell-range-hover {
     border-color: #ff4d4f !important;
   }
 }
+
 </style>
 <style lang="less">
+
 .picker-wrapper {
+  
   .ant-picker-range-arrow,.ant-picker-range-arrow {
     display: none !important;
-    opacity: 0 !important;
     // left: 0 !important;
   }
 }
