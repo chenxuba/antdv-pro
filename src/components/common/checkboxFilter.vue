@@ -28,10 +28,10 @@
         </a-menu-item>
         <div class="max-h-80 overflow-auto scrollbar">
           <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
-          :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
-          <div class="text-sm text-#666 font-500 leading-7">{{ item.value }}</div>
-          <div class="text-xs text-#888">{{ item.phone }}</div>
-        </a-menu-item>
+            :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
+            <div class="text-sm text-#666 font-500 leading-7">{{ item.value }}</div>
+            <div class="text-xs text-#888">{{ item.phone }}</div>
+          </a-menu-item>
         </div>
       </a-menu>
     </template>
@@ -211,27 +211,14 @@ const handleRangePicker = (dates) => {
   pointer-events: none;
   opacity: 0;
   position: absolute;
-  left: 0 !important;
+  left: -10px !important;
 }
-
-v-deep .ant-picker-cell-range-hover {
-  &::after {
-    background: rgba(24,144,255,0.1) !important;
-    border: 2px dashed #fc0202 !important;
-  }
-  
-  &-start::after,
-  &-end::after {
-    border-color: #ff4d4f !important;
-  }
-}
-
 </style>
 <style lang="less">
-
 .picker-wrapper {
-  
-  .ant-picker-range-arrow,.ant-picker-range-arrow {
+
+  .ant-picker-range-arrow,
+  .ant-picker-range-arrow {
     display: none !important;
     // left: 0 !important;
   }
