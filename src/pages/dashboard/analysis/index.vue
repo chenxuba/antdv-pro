@@ -33,7 +33,7 @@ const sexVals = ref([]);
 const createPeoOptions = ref([
   { id: 1, value: "陈瑞生", phone: '17601241636' },
   { id: 2, value: "张晨", phone: '17662072520' },
-  { id: 3, value: "陈旭", phone: '15864646629' }
+  { id: 3, value: "陈旭", phone: '15864646629' },
 ])
 const createPeoVals = ref(null); 
 

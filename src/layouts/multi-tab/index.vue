@@ -165,7 +165,7 @@ onUnmounted(() => {
   </a-tabs>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 .pro-ant-multi-tab {
   transition: all .3s;
 

@@ -20,6 +20,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     }
   }
   return {
+    base: './',
     plugins: createVitePlugins(env),
     resolve: {
       alias: [
