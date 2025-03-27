@@ -1,8 +1,9 @@
 <template>
-  <a-dropdown :trigger="['click']" v-model:open="visible" placement="bottomLeft" :arrow="true">
+  <a-dropdown v-if="type == 'checkbox'" :trigger="['click']" v-model:open="visible" placement="bottomLeft"
+    :arrow="true">
     <template #overlay>
       <a-menu>
-        <a-menu-item>
+        <a-menu-item class="check-item">
           <a-checkbox-group class="vertical-checkbox-group" v-model:value="checkedValues">
             <a-checkbox v-for="item in options" :key="item.id" :value="item.id" @change="handleChange">
               {{ item.value }}
@@ -18,12 +19,68 @@
       <DownOutlined v-else :style="{ fontSize: '10px' }" />
     </a-button>
   </a-dropdown>
+  <a-dropdown v-if="type == 'radio'" :trigger="['click']" v-model:open="visible" placement="bottomLeft" :arrow="true">
+    <template #overlay>
+      <a-menu>
+        <a-menu-item class="top-item">
+          <!-- 搜索栏 -->
+          <a-input class="mt-1 mb-2 w-27"  v-model:value="searchPeo" autofocus placeholder="输入创建人" />
+        </a-menu-item>
+        <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
+          :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
+          <div class="text-sm text-#666 font-500 leading-7">{{ item.value }}</div>
+          <div class="text-xs text-#888">{{ item.phone }}</div>
+        </a-menu-item>
+      </a-menu>
+    </template>
+
+    <a-button class="h-28px flex filter-btn mr-2">
+      {{ label }}
+      <div v-if="checkedValues" class="num">1</div>
+      <DownOutlined v-else :style="{ fontSize: '10px' }" />
+    </a-button>
+  </a-dropdown>
+  <a-dropdown   v-if="type == 'dateTime'" :trigger="['click']" v-model:open="visible" placement="bottomLeft" :arrow="false">
+    <a-button style="position: relative;" class="h-28px flex filter-btn mr-2">
+      {{ label }}
+      <div v-if="checkedValues.length>0" class="num">1</div>
+      <DownOutlined v-else :style="{ fontSize: '10px' }" />
+      <a-range-picker @change="handleRangePicker" popupClassName="picker-wrapper"   :open="visible"  v-model:value="selectDates"   />
+    </a-button>
+  </a-dropdown>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch,defineExpose } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
+import { debounce } from 'lodash-es';
+const searchPeo = ref('');
+const selectDates = ref([])
+// 监听输入变化
+watch(searchPeo, (newVal) => {
+  debouncedSearch(newVal);
+});
+// 暴露清空方法给父组件
+const resetSearch = () => {
+  searchPeo.value = ''
+}
 
+defineExpose({
+  resetSearch
+})
+// 实际搜索逻辑
+const doSearch = () => {
+  console.log('执行搜索:', searchPeo.value);
+  // 这里替换为真实的搜索逻辑
+};
+
+// 创建防抖函数（500ms延迟）
+const debouncedSearch = debounce(doSearch, 500);
+
+// 组件卸载前清理
+onBeforeUnmount(() => {
+  debouncedSearch.cancel();
+});
 const props = defineProps({
   options: {
     type: Array,
@@ -38,13 +95,16 @@ const props = defineProps({
     type: String,
     default: '意向度'
   },
+  type: {
+    type: String,
+    default: 'radio'
+  },
   checkedValues: {
-    type: Array,
-    default: () => []
+    type: [Array,Number,String],
   }
 });
 
-const emit = defineEmits(['update:checkedValues', 'change']);
+const emit = defineEmits(['update:checkedValues', 'change', 'radioChange']);
 
 const visible = ref(false);
 
@@ -60,6 +120,16 @@ const checkedValues = computed({
 const handleChange = () => {
   emit('change', checkedValues.value);
 };
+const handleRadioChange = (id) => {
+  emit('radioChange', id);
+  checkedValues.value = id
+  visible.value = false
+};
+const handleRangePicker = (dates) =>{
+  checkedValues.value = dates
+  selectDates.value = []
+  visible.value = false
+}
 </script>
 
 <!-- 保留原有样式或根据需要添加 scoped 样式 -->
@@ -87,9 +157,38 @@ const handleChange = () => {
   gap: 12px;
 }
 
-::v-deep .ant-dropdown-menu-item {
+:deep(.ant-dropdown-menu-item.check-item) {
   &:hover {
     background-color: transparent !important;
+  }
+}
+
+:deep(.ant-dropdown-menu-item.menu-item) {
+  &:hover {
+    background-color: #dee6fc !important;
+  }
+}
+
+:deep(.active) {
+  background-color: #ebf0fe !important;
+}
+
+:deep(.top-item) {
+  padding: 0 !important;
+}
+:deep(.ant-picker-range){
+  pointer-events: none;
+  // opacity: 0;
+  // position: absolute;
+  // left: 0 !important;  
+}
+
+</style>
+<style lang="less">
+.picker-wrapper{
+  
+  .ant-picker-range-arrow{
+    left: 0 !important;
   }
 }
 </style>
