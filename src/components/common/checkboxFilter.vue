@@ -45,17 +45,27 @@
       {{ label }}
       <div v-if="checkedValues.length>0" class="num">1</div>
       <DownOutlined v-else :style="{ fontSize: '10px' }" />
-      <a-range-picker @change="handleRangePicker" popupClassName="picker-wrapper"   :open="visible"  v-model:value="selectDates"   />
+      <a-range-picker :key="pickerKey" @calendarChange="calendarChangeFun" value-format="YYYY-MM-DD" :disabled-date="disabledDate" @change="handleRangePicker" popupClassName="picker-wrapper"   :open="visible"  v-model:value="selectDates"   />
     </a-button>
   </a-dropdown>
 </template>
 
 <script setup>
-import { ref, computed, watch,defineExpose } from 'vue';
+import { ref, computed, watch,defineExpose,toRaw } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import { debounce } from 'lodash-es';
+import dayjs from 'dayjs';
+
+const disabledDate = () => {
+   
+ };
+ const calendarChangeFun = (e) =>{
+  console.log(e);
+  
+ }
 const searchPeo = ref('');
 const selectDates = ref([])
+const pickerKey = ref(0);
 // 监听输入变化
 watch(searchPeo, (newVal) => {
   debouncedSearch(newVal);
@@ -104,7 +114,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:checkedValues', 'change', 'radioChange']);
+const emit = defineEmits(['update:checkedValues', 'change', 'radioChange','datePickerChange']);
 
 const visible = ref(false);
 
@@ -127,8 +137,14 @@ const handleRadioChange = (id) => {
 };
 const handleRangePicker = (dates) =>{
   checkedValues.value = dates
-  selectDates.value = []
   visible.value = false
+  pickerKey.value++;     // 强制重新渲染
+  selectDates.value = []
+  // 转为普通数组
+  const rawDates = toRaw(dates);
+  // 或浅拷贝
+  // const rawDates = [...dates];
+  emit('datePickerChange', rawDates);
 }
 </script>
 
@@ -178,9 +194,9 @@ const handleRangePicker = (dates) =>{
 }
 :deep(.ant-picker-range){
   pointer-events: none;
-  // opacity: 0;
-  // position: absolute;
-  // left: 0 !important;  
+  opacity: 0;
+  position: absolute;
+  left: 0 !important;  
 }
 
 </style>

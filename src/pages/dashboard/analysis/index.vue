@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup >
 import { ref, computed, nextTick } from 'vue';
 import { DeleteOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import checkboxFilter from "@/components/common/checkboxFilter.vue";
@@ -10,7 +10,7 @@ const customOptions = ref([
   { id: 3, value: "低" },
   { id: 4, value: "未知" }
 ]);
-const selectedValues = ref<number[]>([]);
+const selectedValues = ref([]);
 
 // 跟进状态选项
 const followStatusOptions = ref([
@@ -19,7 +19,7 @@ const followStatusOptions = ref([
   { id: 3, value: "未接听" },
   { id: 4, value: "已邀约" }
 ]);
-const followStatusVals = ref<number[]>([]);
+const followStatusVals = ref([]);
 
 // 性别选项
 const sexOptions = ref([
@@ -27,7 +27,7 @@ const sexOptions = ref([
   { id: 2, value: "女" },
   { id: 3, value: "未知" }
 ]);
-const sexVals = ref<number[]>([]);
+const sexVals = ref([]);
 
 // 创建人选项
 const createPeoOptions = ref([
@@ -35,7 +35,7 @@ const createPeoOptions = ref([
   { id: 2, value: "张晨", phone: '17662072520' },
   { id: 3, value: "陈旭", phone: '15864646629' }
 ])
-const createPeoVals = ref<number | null>(null);  // 改为数字类型
+const createPeoVals = ref(null); 
 
 // 创建时间选项
 const createTimeVals = ref([])
@@ -48,7 +48,7 @@ const quickFilters = ref([
 ]);
 
 // 处理快捷筛选单选
-const selectQuickFilter = (selectedFilter: typeof quickFilters.value[number]) => {
+const selectQuickFilter = (selectedFilter) => {
   quickFilters.value.forEach(filter => {
     filter.selected = filter.id === selectedFilter.id ? !filter.selected : false;
   });
@@ -74,12 +74,12 @@ const handleSexChange = () => {
   });
 };
 
-const handleCreatePeoChange = (e: any) => {
+const handleCreatePeoChange = (e) => {
   nextTick(() => {
     console.log('创建人:', e);
   });
 }
-const handleCreateTimeChange = (e: any) => {
+const handleCreateTimeChange = (e) => {
   nextTick(() => {
     console.log('创建时间:', e);
   });
@@ -112,7 +112,18 @@ const selectedConditions = computed(() => {
       type: 'createPeo',
       label: '创建人',
       values: createPeoOptions.value.filter(opt => opt.id === createPeoVals.value)
-    }
+    },
+    {
+      type: 'createTime',
+      label: '创建时间',
+      values: createTimeVals.value.length === 2
+        ? [{
+          id: 'dateRange',
+          value: `${createTimeVals.value[0]} 至 ${createTimeVals.value[1]}`
+        }]
+        : []
+    },
+
   ];
   return conditions.filter(item => item.values.length > 0);
 });
@@ -120,7 +131,7 @@ const selectedConditions = computed(() => {
 // 清空所有筛选
 const clearAll = () => {
   // 重置多选类
-  [selectedValues, followStatusVals, sexVals].forEach(
+  [selectedValues, followStatusVals, sexVals, createTimeVals].forEach(
     ref => ref.value = []
   );
   // 重置单选类
@@ -132,7 +143,7 @@ const clearAll = () => {
 };
 
 // 移除单个条件
-const removeCondition = (type: string, id: number) => {
+const removeCondition = (type, id) => {
   switch (type) {
     case 'intention':
       selectedValues.value = [];
@@ -149,6 +160,9 @@ const removeCondition = (type: string, id: number) => {
       break;
     case 'createPeo':  // 新增创建人移除逻辑
       createPeoVals.value = null;
+      break;
+    case 'createTime':  // 新增创建时间移除逻辑
+      createTimeVals.value = [];
       break;
   }
 };
@@ -171,7 +185,7 @@ const removeCondition = (type: string, id: number) => {
     <div class="filter-section">
       <span class="section-title">筛选条件：</span>
       <div class="standard-filters">
-        <checkbox-filter v-model:checkedValues="selectedValues" :options="customOptions" label="意向度"
+        <checkbox-filter  v-model:checkedValues="selectedValues" :options="customOptions" label="意向度"
           @change="handleIntentionChange" type="checkbox" />
         <checkbox-filter v-model:checkedValues="followStatusVals" :options="followStatusOptions" label="跟进状态"
           @change="handleFollowChange" type="checkbox" />
@@ -179,7 +193,7 @@ const removeCondition = (type: string, id: number) => {
           type="checkbox" />
         <checkbox-filter ref="childRef" v-model:checkedValues="createPeoVals" :options="createPeoOptions" label="创建人"
           @radioChange="handleCreatePeoChange" type="radio" />
-        <checkbox-filter v-model:checkedValues="createTimeVals" label="创建时间" @radioChange="handleCreateTimeChange"
+        <checkbox-filter v-model:checkedValues="createTimeVals" label="创建时间" @datePickerChange="handleCreateTimeChange"
           type="dateTime" />
       </div>
     </div>
@@ -188,12 +202,12 @@ const removeCondition = (type: string, id: number) => {
     <div class="selected-conditions" v-if="selectedConditions.length > 0">
       <span class="section-title">已选条件：</span>
       <div class="condition-tags">
-        <a-tag color="red" class="clear-all" @click="clearAll">
+        <a-tag color="red" class="clear-all mb-2" @click="clearAll">
           清空所有
           <DeleteOutlined class="text-3 ml-0.5" />
         </a-tag>
 
-        <a-tag v-for="condition in selectedConditions" :key="condition.type" color="blue" class="condition-tag">
+        <a-tag v-for="condition in selectedConditions" :key="condition.type" color="blue" class="condition-tag mb-2">
           <div class="tag-content">
             <span class="condition-label">{{ condition.label }}：</span>
             <div class="condition-values">
@@ -202,6 +216,12 @@ const removeCondition = (type: string, id: number) => {
                   {{ condition.values[0].value }}
                   <CloseOutlined class="close-icon"
                     @click.stop="removeCondition(condition.type, condition.values[0].id)" />
+                </span>
+              </template>
+              <template v-else-if="condition.type === 'createTime'">
+                <span class="value-item">
+                  {{ condition.values[0].value }}
+                  <CloseOutlined class="close-icon" @click.stop="removeCondition(condition.type, 0)" />
                 </span>
               </template>
               <template v-else>
@@ -239,6 +259,9 @@ const removeCondition = (type: string, id: number) => {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
+}
+.section-title{
+  white-space: nowrap;
 }
 
 
