@@ -24,7 +24,7 @@
       <a-menu>
         <a-menu-item class="top-item">
           <!-- 搜索栏 -->
-          <a-input class="mt-1 mb-2 w-27"  v-model:value="searchPeo" autofocus placeholder="输入创建人" />
+          <a-input class="mt-1 mb-2 w-27" v-model:value="searchPeo" autofocus placeholder="输入创建人" />
         </a-menu-item>
         <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
           :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
@@ -40,29 +40,40 @@
       <DownOutlined v-else :style="{ fontSize: '10px' }" />
     </a-button>
   </a-dropdown>
-  <a-dropdown   v-if="type == 'dateTime'" :trigger="['click']" v-model:open="visible" placement="bottomLeft" :arrow="false">
+  <a-dropdown v-if="type == 'dateTime'" :trigger="['click']" v-model:open="visible" placement="bottomLeft"
+    :arrow="false">
     <a-button style="position: relative;" class="h-28px flex filter-btn mr-2">
       {{ label }}
-      <div v-if="checkedValues.length>0" class="num">1</div>
+      <div v-if="checkedValues.length > 0" class="num">1</div>
       <DownOutlined v-else :style="{ fontSize: '10px' }" />
-      <a-range-picker :key="pickerKey" @calendarChange="calendarChangeFun" value-format="YYYY-MM-DD" :disabled-date="disabledDate" @change="handleRangePicker" popupClassName="picker-wrapper"   :open="visible"  v-model:value="selectDates"   />
+      <a-range-picker :key="pickerKey" @calendarChange="calendarChangeFun" value-format="YYYY-MM-DD"
+        :disabled-date="disabledDate" @change="handleRangePicker" popupClassName="picker-wrapper" :open="visible"
+        v-model:value="selectDates" />
     </a-button>
   </a-dropdown>
 </template>
 
 <script setup>
-import { ref, computed, watch,defineExpose,toRaw } from 'vue';
+import { ref, computed, watch, defineExpose, toRaw } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
 
-const disabledDate = () => {
-   
- };
- const calendarChangeFun = (e) =>{
-  console.log(e);
-  
- }
+// 指定禁用之前的日期（例如：2023-01-01）
+let specifiedDate = null;
+
+const disabledDate = (current) => {
+  const today = new Date();
+
+  // 克隆当前日期并清除时间部分
+  const currentDate = new Date(current);
+
+  // 禁用条件：日期在 specifiedDate 之前 或 今天之后
+  return currentDate < specifiedDate || currentDate > today;
+};
+const calendarChangeFun = (e) => {
+  specifiedDate = new Date(e[0])
+}
 const searchPeo = ref('');
 const selectDates = ref([])
 const pickerKey = ref(0);
@@ -110,11 +121,11 @@ const props = defineProps({
     default: 'radio'
   },
   checkedValues: {
-    type: [Array,Number,String],
+    type: [Array, Number, String],
   }
 });
 
-const emit = defineEmits(['update:checkedValues', 'change', 'radioChange','datePickerChange']);
+const emit = defineEmits(['update:checkedValues', 'change', 'radioChange', 'datePickerChange']);
 
 const visible = ref(false);
 
@@ -135,7 +146,7 @@ const handleRadioChange = (id) => {
   checkedValues.value = id
   visible.value = false
 };
-const handleRangePicker = (dates) =>{
+const handleRangePicker = (dates) => {
   checkedValues.value = dates
   visible.value = false
   pickerKey.value++;     // 强制重新渲染
@@ -145,6 +156,7 @@ const handleRangePicker = (dates) =>{
   // 或浅拷贝
   // const rawDates = [...dates];
   emit('datePickerChange', rawDates);
+  specifiedDate = ''
 }
 </script>
 
@@ -192,19 +204,27 @@ const handleRangePicker = (dates) =>{
 :deep(.top-item) {
   padding: 0 !important;
 }
-:deep(.ant-picker-range){
+
+:deep(.ant-picker-range) {
   pointer-events: none;
   opacity: 0;
   position: absolute;
-  left: 0 !important;  
+  left: 0 !important;
 }
-
-</style>
-<style lang="less">
-.picker-wrapper{
-  
-  .ant-picker-range-arrow{
+.picker-wrapper {
+  .ant-picker-range-arrow {
     left: 0 !important;
+  }
+}
+v-deep .ant-picker-cell-range-hover {
+  &::after {
+    background: rgba(24,144,255,0.1) !important;
+    border: 2px dashed #fc0202 !important;
+  }
+  
+  &-start::after,
+  &-end::after {
+    border-color: #ff4d4f !important;
   }
 }
 </style>
