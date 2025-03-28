@@ -24,13 +24,33 @@
       <a-menu>
         <a-menu-item class="top-item">
           <!-- 搜索栏 -->
-          <a-input class="mt-1 mb-2 w-27" v-model:value="searchPeo" autofocus :placeholder="placeholder" />
+          <a-input v-if="category == 'course' || category == 'teacher'" class="mt-1 mb-2 w-27" v-model:value="searchPeo" autofocus :placeholder="placeholder" />
+          <a-input v-if="category == 'stu'" class="mt-1 mb-2 w-59" v-model:value="searchPeo" autofocus :placeholder="placeholder" />
         </a-menu-item>
-        <div class="max-h-80 overflow-auto scrollbar">
+        <div class="max-h-80 overflow-auto scrollbar" v-if="category == 'course' || category == 'teacher'">
           <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
             :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
-            <div class="text-sm text-#666  leading-7">{{ item.value }}</div>
-            <div class="text-xs text-#888">{{ item.phone }}</div>
+            <div class="text-sm text-#666  leading-7">{{ item.value ?? item.name }}</div>
+            <div class="text-xs text-#888">{{ item.phone ?? '' }}</div>
+          </a-menu-item>
+        </div>
+        <div class="max-h-80 overflow-auto scrollbar" v-if="category == 'stu'">
+          <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
+            :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
+            <div class="flex flex-center mb-1">
+              <div>
+                <img class="w-10 rounded-10"
+                  src="https://prod-cdn.schoolpal.cn/training/next-erp/shared/static/images/defaultimg/default_avator.png"
+                  alt="">
+              </div>
+              <div class="ml-2 mr-3">
+                <div class="text-sm text-#666  leading-7">{{ item.value ?? item.name }}</div>
+                <div class="text-xs text-#888">{{ item.phone ?? '' }}</div>
+              </div>
+              <div>
+                <a-tag  :bordered="false" color="processing">在读学员</a-tag>
+              </div>
+            </div>
           </a-menu-item>
         </div>
       </a-menu>
@@ -125,10 +145,14 @@ const props = defineProps({
   checkedValues: {
     type: [Array, Number, String],
   },
-  placeholder:{
+  placeholder: {
     type: String,
     default: '请输入关键字'
-  }
+  },
+  category: {
+    type: String,
+    default: 'stu'
+  },
 });
 
 const emit = defineEmits(['update:checkedValues', 'change', 'radioChange', 'datePickerChange']);

@@ -4,6 +4,7 @@ import { DeleteOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import checkboxFilter from "@/components/common/checkboxFilter.vue";
 const childRef = ref(null)
 const lastUpdated = reactive({});
+const conditionOrder = ref([]); // 存储条件类型的添加顺序
 // 意向度选项
 const customOptions = ref([
   { id: 1, value: "高" },
@@ -50,6 +51,16 @@ const courseListOptions = ref([
   { id: 5, value: "高级游戏课" },
 ])
 const selectCourseValues = ref(null);
+// 推荐人选项
+const stuListOptions = ref([
+  { id: 1, name: "张学良", phone: "17601241636" },
+  { id: 2, name: "高保庆", phone: "18882327343" },
+  { id: 3, name: "谢霆锋", phone: "16723338886" },
+  { id: 4, name: "张飞", phone: "17662372329" },
+  { id: 5, name: "武松", phone: "19187235172" },
+  { id: 6, name: "杜十娘", phone: "15422127865" }
+])
+const selectStuVals = ref(null)
 
 // 快捷筛选选项（单选）
 const quickFilters = ref([
@@ -84,7 +95,6 @@ const handleSexChange = () => {
     console.log('性别:', toRaw(sexVals.value));
   });
 };
-
 const handleCreatePeoChange = (e) => {
   nextTick(() => {
     console.log('创建人:', e);
@@ -100,18 +110,13 @@ const handleCourseChange = (e) => {
     console.log('意向课程:', e);
   });
 }
-// 监听各条件变化，更新最后操作时间
-watch(selectedValues, () => lastUpdated.intention = Date.now());
-watch(followStatusVals, () => lastUpdated.followStatus = Date.now());
-watch(sexVals, () => lastUpdated.sex = Date.now());
-watch(createPeoVals, () => lastUpdated.createPeo = Date.now());
-watch(createTimeVals, () => lastUpdated.createTime = Date.now());
-watch(selectCourseValues, () => lastUpdated.intentionCourse = Date.now());
-watch(
-  () => quickFilters.value.map(q => q.selected),
-  () => lastUpdated.quick = Date.now(),
-  { deep: true }
-);
+const handleReferenceChange = (e) => {
+  nextTick(() => {
+    console.log('推荐人:', e);
+  });
+}
+
+
 // 已选条件计算
 const selectedConditions = computed(() => {
   const conditions = [
@@ -155,12 +160,46 @@ const selectedConditions = computed(() => {
       label: '意向课程',
       values: courseListOptions.value.filter(opt => opt.id === selectCourseValues.value)
     },
+    {
+      type: 'reference',
+      label: '推荐人',
+      values: stuListOptions.value.filter(opt => opt.id === selectStuVals.value)
+    },
   ];
   return conditions
     .filter(item => item.values.length > 0)
     .sort((a, b) => (lastUpdated[a.type] || 0) - (lastUpdated[b.type] || 0));
 });
+// 监听各条件变化，更新最后操作时间
+watch(selectedValues, () => lastUpdated.intention = Date.now());
+watch(followStatusVals, () => lastUpdated.followStatus = Date.now());
+watch(sexVals, () => lastUpdated.sex = Date.now());
+watch(createPeoVals, () => lastUpdated.createPeo = Date.now());
+watch(createTimeVals, () => lastUpdated.createTime = Date.now());
+watch(selectCourseValues, () => lastUpdated.intentionCourse = Date.now());
+watch(() => quickFilters.value.map(q => q.selected), () => lastUpdated.quick = Date.now(), { deep: true });
+watch(selectStuVals, () => lastUpdated.reference = Date.now());
+// 观察筛选条件变化，维护顺序队列
+watch(selectedConditions, (newConditions) => {
+  const newTypes = newConditions.map(c => c.type);
 
+  // 保留仍然存在的类型
+  conditionOrder.value = conditionOrder.value.filter(t => newTypes.includes(t));
+
+  // 添加新增的类型到队列末尾
+  newTypes.forEach(t => {
+    if (!conditionOrder.value.includes(t)) {
+      conditionOrder.value.push(t);
+    }
+  });
+}, { deep: true });
+
+// 最终使用的排序条件
+const orderedConditions = computed(() => {
+  return [...selectedConditions.value].sort((a, b) =>
+    conditionOrder.value.indexOf(a.type) - conditionOrder.value.indexOf(b.type)
+  );
+});
 // 清空所有筛选
 const clearAll = () => {
   // 重置多选类
@@ -171,6 +210,7 @@ const clearAll = () => {
   quickFilters.value.forEach(q => q.selected = false);
   createPeoVals.value = null;
   selectCourseValues.value = null;
+  selectStuVals.value = null;
   if (childRef.value) {
     childRef.value.resetSearch()
   }
@@ -201,6 +241,9 @@ const removeCondition = (type, id) => {
     case 'intentionCourse':  // 新增意向课程移除逻辑
       selectCourseValues.value = null;
       break;
+    case 'reference':  // 新增推荐人移除逻辑
+      selectStuVals.value = null;
+      break;
   }
 };
 </script>
@@ -228,17 +271,20 @@ const removeCondition = (type, id) => {
           @change="handleFollowChange" type="checkbox" />
         <checkbox-filter v-model:checkedValues="sexVals" :options="sexOptions" label="性别" @change="handleSexChange"
           type="checkbox" />
-        <checkbox-filter ref="childRef" placeholder="请输入创建人" v-model:checkedValues="createPeoVals"
+        <checkbox-filter ref="childRef" category="teacher" placeholder="请输入创建人" v-model:checkedValues="createPeoVals"
           :options="createPeoOptions" label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
         <checkbox-filter v-model:checkedValues="createTimeVals" label="创建时间" @datePickerChange="handleCreateTimeChange"
           type="dateTime" />
-        <checkbox-filter ref="childRef" placeholder="请输入意向课程" v-model:checkedValues="selectCourseValues"
-          :options="courseListOptions" label="意向课程" @radioChange="handleCourseChange" type="radio" />
+        <checkbox-filter ref="childRef" category="course" placeholder="请输入意向课程"
+          v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
+          @radioChange="handleCourseChange" type="radio" />
+        <checkbox-filter ref="childRef" category="stu" placeholder="请输入推荐人" v-model:checkedValues="selectStuVals"
+          :options="stuListOptions" label="推荐人" @radioChange="handleReferenceChange" type="radio" />
       </div>
     </div>
 
     <!-- 已选条件展示 -->
-    <div class="selected-conditions" v-if="selectedConditions.length > 0">
+    <div class="selected-conditions" v-if="orderedConditions.length > 0">
       <span class="section-title">已选条件：</span>
       <div class="condition-tags">
         <a-tag color="red" class="clear-all mb-2" @click="clearAll">
@@ -246,7 +292,7 @@ const removeCondition = (type, id) => {
           <DeleteOutlined class="text-3 ml-0.5" />
         </a-tag>
 
-        <a-tag v-for="condition in selectedConditions" :key="condition.type" color="blue" class="condition-tag mb-2">
+        <a-tag v-for="condition in orderedConditions" :key="condition.type" color="blue" class="condition-tag mb-2">
           <div class="tag-content">
             <span class="condition-label">{{ condition.label }}：</span>
             <div class="condition-values">
@@ -265,7 +311,7 @@ const removeCondition = (type, id) => {
               </template>
               <template v-else>
                 <span v-for="(value, index) in condition.values" :key="value.id" class="value-item">
-                  {{ value.value }}
+                  {{ value.value ?? value.name }}
                   <CloseOutlined v-if="index === condition.values.length - 1" class="close-icon"
                     @click.stop="removeCondition(condition.type, value.id)" />
                   <span v-else class="separator">、</span>
