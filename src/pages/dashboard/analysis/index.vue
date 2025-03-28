@@ -1,8 +1,9 @@
-<script setup >
+<script setup>
 import { ref, computed, nextTick } from 'vue';
 import { DeleteOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import checkboxFilter from "@/components/common/checkboxFilter.vue";
 const childRef = ref(null)
+const lastUpdated = reactive({});
 // 意向度选项
 const customOptions = ref([
   { id: 1, value: "高" },
@@ -35,10 +36,20 @@ const createPeoOptions = ref([
   { id: 2, value: "张晨", phone: '17662072520' },
   { id: 3, value: "陈旭", phone: '15864646629' },
 ])
-const createPeoVals = ref(null); 
+const createPeoVals = ref(null);
 
 // 创建时间选项
 const createTimeVals = ref([])
+
+// 课程列表选项
+const courseListOptions = ref([
+  { id: 1, value: "初级感统课" },
+  { id: 2, value: "初级言语课" },
+  { id: 3, value: "交互认知课" },
+  { id: 4, value: "高级认知课" },
+  { id: 5, value: "高级游戏课" },
+])
+const selectCourseValues = ref(null);
 
 // 快捷筛选选项（单选）
 const quickFilters = ref([
@@ -84,7 +95,23 @@ const handleCreateTimeChange = (e) => {
     console.log('创建时间:', e);
   });
 }
-
+const handleCourseChange = (e) => {
+  nextTick(() => {
+    console.log('意向课程:', e);
+  });
+}
+// 监听各条件变化，更新最后操作时间
+watch(selectedValues, () => lastUpdated.intention = Date.now());
+watch(followStatusVals, () => lastUpdated.followStatus = Date.now());
+watch(sexVals, () => lastUpdated.sex = Date.now());
+watch(createPeoVals, () => lastUpdated.createPeo = Date.now());
+watch(createTimeVals, () => lastUpdated.createTime = Date.now());
+watch(selectCourseValues, () => lastUpdated.intentionCourse = Date.now());
+watch(
+  () => quickFilters.value.map(q => q.selected),
+  () => lastUpdated.quick = Date.now(),
+  { deep: true }
+);
 // 已选条件计算
 const selectedConditions = computed(() => {
   const conditions = [
@@ -123,9 +150,15 @@ const selectedConditions = computed(() => {
         }]
         : []
     },
-
+    {
+      type: 'intentionCourse',
+      label: '意向课程',
+      values: courseListOptions.value.filter(opt => opt.id === selectCourseValues.value)
+    },
   ];
-  return conditions.filter(item => item.values.length > 0);
+  return conditions
+    .filter(item => item.values.length > 0)
+    .sort((a, b) => (lastUpdated[a.type] || 0) - (lastUpdated[b.type] || 0));
 });
 
 // 清空所有筛选
@@ -137,6 +170,7 @@ const clearAll = () => {
   // 重置单选类
   quickFilters.value.forEach(q => q.selected = false);
   createPeoVals.value = null;
+  selectCourseValues.value = null;
   if (childRef.value) {
     childRef.value.resetSearch()
   }
@@ -164,6 +198,9 @@ const removeCondition = (type, id) => {
     case 'createTime':  // 新增创建时间移除逻辑
       createTimeVals.value = [];
       break;
+    case 'intentionCourse':  // 新增意向课程移除逻辑
+      selectCourseValues.value = null;
+      break;
   }
 };
 </script>
@@ -185,16 +222,18 @@ const removeCondition = (type, id) => {
     <div class="filter-section">
       <span class="section-title">筛选条件：</span>
       <div class="standard-filters">
-        <checkbox-filter  v-model:checkedValues="selectedValues" :options="customOptions" label="意向度"
+        <checkbox-filter v-model:checkedValues="selectedValues" :options="customOptions" label="意向度"
           @change="handleIntentionChange" type="checkbox" />
         <checkbox-filter v-model:checkedValues="followStatusVals" :options="followStatusOptions" label="跟进状态"
           @change="handleFollowChange" type="checkbox" />
         <checkbox-filter v-model:checkedValues="sexVals" :options="sexOptions" label="性别" @change="handleSexChange"
           type="checkbox" />
-        <checkbox-filter ref="childRef" v-model:checkedValues="createPeoVals" :options="createPeoOptions" label="创建人"
-          @radioChange="handleCreatePeoChange" type="radio" />
+        <checkbox-filter ref="childRef" placeholder="请输入创建人" v-model:checkedValues="createPeoVals"
+          :options="createPeoOptions" label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
         <checkbox-filter v-model:checkedValues="createTimeVals" label="创建时间" @datePickerChange="handleCreateTimeChange"
           type="dateTime" />
+        <checkbox-filter ref="childRef" placeholder="请输入意向课程" v-model:checkedValues="selectCourseValues"
+          :options="courseListOptions" label="意向课程" @radioChange="handleCourseChange" type="radio" />
       </div>
     </div>
 
@@ -260,7 +299,8 @@ const removeCondition = (type, id) => {
   align-items: center;
   margin-bottom: 12px;
 }
-.section-title{
+
+.section-title {
   white-space: nowrap;
 }
 

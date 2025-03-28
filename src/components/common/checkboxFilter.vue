@@ -24,12 +24,12 @@
       <a-menu>
         <a-menu-item class="top-item">
           <!-- 搜索栏 -->
-          <a-input class="mt-1 mb-2 w-27" v-model:value="searchPeo" autofocus placeholder="输入创建人" />
+          <a-input class="mt-1 mb-2 w-27" v-model:value="searchPeo" autofocus :placeholder="placeholder" />
         </a-menu-item>
         <div class="max-h-80 overflow-auto scrollbar">
           <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
             :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
-            <div class="text-sm text-#666 font-500 leading-7">{{ item.value }}</div>
+            <div class="text-sm text-#666  leading-7">{{ item.value }}</div>
             <div class="text-xs text-#888">{{ item.phone }}</div>
           </a-menu-item>
         </div>
@@ -124,6 +124,10 @@ const props = defineProps({
   },
   checkedValues: {
     type: [Array, Number, String],
+  },
+  placeholder:{
+    type: String,
+    default: '请输入关键字'
   }
 });
 
@@ -213,7 +217,6 @@ const handleRangePicker = (dates) => {
   position: absolute;
   left: -10px !important;
 }
-
 </style>
 <style lang="less">
 .picker-wrapper {
@@ -224,7 +227,8 @@ const handleRangePicker = (dates) => {
     // left: 0 !important;
   }
 }
-.ant-dropdown-show-arrow{
+
+.ant-dropdown-show-arrow {
   z-index: 9999 !important;
 }
 </style>
