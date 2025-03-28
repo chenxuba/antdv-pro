@@ -213,6 +213,7 @@ const handleRangePicker = (dates) => {
   position: absolute;
   left: -10px !important;
 }
+
 </style>
 <style lang="less">
 .picker-wrapper {
@@ -222,5 +223,8 @@ const handleRangePicker = (dates) => {
     display: none !important;
     // left: 0 !important;
   }
+}
+.ant-dropdown-show-arrow{
+  z-index: 9999 !important;
 }
 </style>
