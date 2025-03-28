@@ -47,6 +47,8 @@ export interface MenuDataItem {
   target?: '_blank' | '_self' | '_parent'
   // 多语言配置
   locale?: string
+  // 是否是上新功能
+  new?: boolean
 }
 
 export type LayoutType = 'mix' | 'side' | 'top'

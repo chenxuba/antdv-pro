@@ -165,17 +165,27 @@ onUnmounted(() => {
   </a-tabs>
 </template>
 
-<style lang="less" scoped>
+<style lang="less" >
+.ant-tabs-dropdown-placement-bottomRight{
+  .ant-tabs-dropdown-menu{
+    width: 110px;
+  }
+    .ant-tabs-tab-remove{
+      display: none !important;
+    }
+  }
 .pro-ant-multi-tab {
   transition: all .3s;
 
-  .ant-tabs-nav-operations {
-    display: none !important;
+  // .ant-tabs-nav-operations {
+  //   display: none !important;
+  // }
+  
+  .ant-tabs-nav-more{
+    padding: 0 16px !important;
   }
-
-}
-
-.ant-tabs-tab {
+  
+  .ant-tabs-tab {
   border-radius: 5px !important;
   height: 32px;
   padding-right: 6px !important;
@@ -214,4 +224,7 @@ onUnmounted(() => {
   justify-content: center;
   margin: 0 10px 0 12px;
 }
+}
+
+
 </style>

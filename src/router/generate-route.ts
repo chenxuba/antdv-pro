@@ -32,6 +32,7 @@ function formatMenu(route: RouteRecordRaw, path?: string) {
     locale: route.meta?.locale,
     keepAlive: route.meta?.keepAlive || false,
     name: route.name as string,
+    new: route.meta?.new as boolean,
     url: route.meta?.url || '',
     target: route.meta?.target || '_blank',
   }

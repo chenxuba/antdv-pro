@@ -41,11 +41,11 @@ export default [
       },
       {
         path: '/dashboard/workplace',
-        name: 'DashboardWorkplace',
+        name: 'DashboardWorkplaces',
         component: () => import('~/pages/dashboard/workplace/index.vue'),
         meta: {
           title: '微机构',
-          new: true,
+          new:true
         },
       },
     ],
