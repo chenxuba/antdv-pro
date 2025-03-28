@@ -249,78 +249,83 @@ const removeCondition = (type, id) => {
 </script>
 
 <template>
-  <div class="home">
-    <!-- 快捷筛选区域 -->
-    <div class="filter-section">
-      <span class="section-title">快捷筛选：</span>
-      <div class="quick-filters">
-        <a-button v-for="filter in quickFilters" :key="filter.id" :type="filter.selected ? 'primary' : 'default'"
-          class="filter-btn" @click="selectQuickFilter(filter)">
-          {{ filter.name }}（{{ filter.count }}）
-        </a-button>
+  <div class="home flex">
+    <div class="flex-1 mr-10">
+      <!-- 快捷筛选区域 -->
+      <div class="filter-section">
+        <span class="section-title">快捷筛选：</span>
+        <div class="quick-filters">
+          <a-button v-for="filter in quickFilters" :key="filter.id" :type="filter.selected ? 'primary' : 'default'"
+            class="filter-btn" @click="selectQuickFilter(filter)">
+            {{ filter.name }}（{{ filter.count }}）
+          </a-button>
+        </div>
       </div>
-    </div>
 
-    <!-- 常规筛选条件 -->
-    <div class="filter-section">
-      <span class="section-title">筛选条件：</span>
-      <div class="standard-filters">
-        <checkbox-filter v-model:checkedValues="selectedValues" :options="customOptions" label="意向度"
-          @change="handleIntentionChange" type="checkbox" />
-        <checkbox-filter v-model:checkedValues="followStatusVals" :options="followStatusOptions" label="跟进状态"
-          @change="handleFollowChange" type="checkbox" />
-        <checkbox-filter v-model:checkedValues="sexVals" :options="sexOptions" label="性别" @change="handleSexChange"
-          type="checkbox" />
-        <checkbox-filter ref="childRef" category="teacher" placeholder="请输入创建人" v-model:checkedValues="createPeoVals"
-          :options="createPeoOptions" label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
-        <checkbox-filter v-model:checkedValues="createTimeVals" label="创建时间" @datePickerChange="handleCreateTimeChange"
-          type="dateTime" />
-        <checkbox-filter ref="childRef" category="course" placeholder="请输入意向课程"
-          v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
-          @radioChange="handleCourseChange" type="radio" />
-        <checkbox-filter ref="childRef" category="stu" placeholder="请输入推荐人" v-model:checkedValues="selectStuVals"
-          :options="stuListOptions" label="推荐人" @radioChange="handleReferenceChange" type="radio" />
+      <!-- 常规筛选条件 -->
+      <div class="filter-section">
+        <span class="section-title">筛选条件：</span>
+        <div class="standard-filters">
+          <checkbox-filter v-model:checkedValues="selectedValues" :options="customOptions" label="意向度"
+            @change="handleIntentionChange" type="checkbox" />
+          <checkbox-filter v-model:checkedValues="followStatusVals" :options="followStatusOptions" label="跟进状态"
+            @change="handleFollowChange" type="checkbox" />
+          <checkbox-filter v-model:checkedValues="sexVals" :options="sexOptions" label="性别" @change="handleSexChange"
+            type="checkbox" />
+          <checkbox-filter ref="childRef" category="teacher" placeholder="请输入创建人" v-model:checkedValues="createPeoVals"
+            :options="createPeoOptions" label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
+          <checkbox-filter v-model:checkedValues="createTimeVals" label="创建时间"
+            @datePickerChange="handleCreateTimeChange" type="dateTime" />
+          <checkbox-filter ref="childRef" category="course" placeholder="请输入意向课程"
+            v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
+            @radioChange="handleCourseChange" type="radio" />
+          <checkbox-filter ref="childRef" category="stu" placeholder="请输入推荐人" v-model:checkedValues="selectStuVals"
+            :options="stuListOptions" label="推荐人" @radioChange="handleReferenceChange" type="radio" />
+        </div>
       </div>
-    </div>
 
-    <!-- 已选条件展示 -->
-    <div class="selected-conditions" v-if="orderedConditions.length > 0">
-      <span class="section-title">已选条件：</span>
-      <div class="condition-tags">
-        <a-tag color="red" class="clear-all mb-2" @click="clearAll">
-          清空所有
-          <DeleteOutlined class="text-3 ml-0.5" />
-        </a-tag>
+      <!-- 已选条件展示 -->
+      <div class="selected-conditions" v-if="orderedConditions.length > 0">
+        <span class="section-title">已选条件：</span>
+        <div class="condition-tags">
+          <a-tag color="red" class="clear-all mb-2" @click="clearAll">
+            清空所有
+            <DeleteOutlined class="text-3 ml-0.5" />
+          </a-tag>
 
-        <a-tag v-for="condition in orderedConditions" :key="condition.type" color="blue" class="condition-tag mb-2">
-          <div class="tag-content">
-            <span class="condition-label">{{ condition.label }}：</span>
-            <div class="condition-values">
-              <template v-if="condition.type === 'quick'">
-                <span class="value-item">
-                  {{ condition.values[0].value }}
-                  <CloseOutlined class="close-icon"
-                    @click.stop="removeCondition(condition.type, condition.values[0].id)" />
-                </span>
-              </template>
-              <template v-else-if="condition.type === 'createTime'">
-                <span class="value-item">
-                  {{ condition.values[0].value }}
-                  <CloseOutlined class="close-icon" @click.stop="removeCondition(condition.type, 0)" />
-                </span>
-              </template>
-              <template v-else>
-                <span v-for="(value, index) in condition.values" :key="value.id" class="value-item">
-                  {{ value.value ?? value.name }}
-                  <CloseOutlined v-if="index === condition.values.length - 1" class="close-icon"
-                    @click.stop="removeCondition(condition.type, value.id)" />
-                  <span v-else class="separator">、</span>
-                </span>
-              </template>
+          <a-tag v-for="condition in orderedConditions" :key="condition.type" color="blue" class="condition-tag mb-2">
+            <div class="tag-content">
+              <span class="condition-label">{{ condition.label }}：</span>
+              <div class="condition-values">
+                <template v-if="condition.type === 'quick'">
+                  <span class="value-item">
+                    {{ condition.values[0].value }}
+                    <CloseOutlined class="close-icon"
+                      @click.stop="removeCondition(condition.type, condition.values[0].id)" />
+                  </span>
+                </template>
+                <template v-else-if="condition.type === 'createTime'">
+                  <span class="value-item">
+                    {{ condition.values[0].value }}
+                    <CloseOutlined class="close-icon" @click.stop="removeCondition(condition.type, 0)" />
+                  </span>
+                </template>
+                <template v-else>
+                  <span v-for="(value, index) in condition.values" :key="value.id" class="value-item">
+                    {{ value.value ?? value.name }}
+                    <CloseOutlined v-if="index === condition.values.length - 1" class="close-icon"
+                      @click.stop="removeCondition(condition.type, value.id)" />
+                    <span v-else class="separator">、</span>
+                  </span>
+                </template>
+              </div>
             </div>
-          </div>
-        </a-tag>
+          </a-tag>
+        </div>
       </div>
+    </div>
+    <div class="w-100">
+      搜索框
     </div>
   </div>
 </template>
@@ -331,6 +336,7 @@ const removeCondition = (type, id) => {
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  align-items: flex-start;
 }
 
 .debug-panel {

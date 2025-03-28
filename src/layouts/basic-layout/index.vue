@@ -138,4 +138,9 @@ const contentCls = computed(() => {
   margin: 12px;
   margin-top: 0;
 }
+.ant-menu-inline .ant-menu-item{
+  height: 30px;
+  line-height: 30px;
+  font-size: 13px;
+}
 </style>
