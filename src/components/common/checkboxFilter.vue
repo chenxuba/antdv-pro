@@ -13,7 +13,7 @@
       </a-menu>
     </template>
 
-    <a-button class="h-28px flex filter-btn mr-2">
+    <a-button class="h-28px flex filter-btn mr-2 mb-2">
       {{ label }}
       <div v-if="checkedValues.length > 0" class="num">{{ checkedValues.length }}</div>
       <DownOutlined v-else :style="{ fontSize: '10px' }" />
@@ -37,7 +37,7 @@
         <div class="max-h-80 overflow-auto scrollbar" v-if="category == 'stu'">
           <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
             :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
-            <div class="flex flex-center mb-1">
+            <div class="flex flex-center mb-2">
               <div>
                 <img class="w-10 rounded-10"
                   src="https://prod-cdn.schoolpal.cn/training/next-erp/shared/static/images/defaultimg/default_avator.png"
@@ -56,7 +56,7 @@
       </a-menu>
     </template>
 
-    <a-button class="h-28px flex filter-btn mr-2">
+    <a-button class="h-28px flex filter-btn mr-2 mb-2">
       {{ label }}
       <div v-if="checkedValues" class="num">1</div>
       <DownOutlined v-else :style="{ fontSize: '10px' }" />
@@ -64,7 +64,7 @@
   </a-dropdown>
   <a-dropdown v-if="type == 'dateTime'" :trigger="['click']" v-model:open="visible" placement="bottomLeft"
     :arrow="true">
-    <a-button style="position: relative;" class="h-28px flex filter-btn mr-2">
+    <a-button style="position: relative;" class="h-28px flex filter-btn mr-2 mb-2">
       {{ label }}
       <div v-if="checkedValues.length > 0" class="num">1</div>
       <DownOutlined v-else :style="{ fontSize: '10px' }" />

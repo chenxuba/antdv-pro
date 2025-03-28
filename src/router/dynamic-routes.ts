@@ -33,6 +33,7 @@ export default [
       {
         path: '/dashboard/monitor',
         name: 'DashboardMonitor',
+        new: 'new',
         component: () => import('~/pages/dashboard/monitor/index.vue'),
         meta: {
           title: '专属小程序',
@@ -44,6 +45,7 @@ export default [
         component: () => import('~/pages/dashboard/workplace/index.vue'),
         meta: {
           title: '微机构',
+          new: true,
         },
       },
     ],

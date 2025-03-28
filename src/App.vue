@@ -17,3 +17,9 @@ useLayoutMenuProvide(layoutMenu, appStore)
     </a-app>
   </a-config-provider>
 </template>
+<style>
+html,body,#app{
+  min-width: 1280px;
+  overflow: auto;
+}
+</style>

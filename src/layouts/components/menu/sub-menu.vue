@@ -36,7 +36,7 @@ function renderTitle(title: VNodeChild | (() => VNodeChild)) {
               </template>
               <template v-if="!isUrl(menu.path)">
                 <RouterLink v-if="link" :to="menu.path">
-                  {{ renderTitle(menu.title) }}
+                  {{ renderTitle(menu.title) }} <span class="new">{{ item }}</span>
                 </RouterLink>
                 <template v-else>
                   {{ renderTitle(menu.title) }}
@@ -74,3 +74,14 @@ function renderTitle(title: VNodeChild | (() => VNodeChild)) {
     </a-menu-item>
   </template>
 </template>
+<style lang="less" scoped>
+  .new{
+    background: red;
+    font-size: 10px;
+    position: relative;
+    top: -8px;
+    color: #fff;
+    padding: 2px;
+    border-radius: 12px 12px 12px 0;
+  }
+</style>

@@ -2,6 +2,7 @@
 import { ref, computed, nextTick } from 'vue';
 import { DeleteOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import checkboxFilter from "@/components/common/checkboxFilter.vue";
+const searchKey = ref(undefined)
 const childRef = ref(null)
 const lastUpdated = reactive({});
 const conditionOrder = ref([]); // 存储条件类型的添加顺序
@@ -246,14 +247,28 @@ const removeCondition = (type, id) => {
       break;
   }
 };
+
+const handleChange = (value) => {
+  console.log(`selected ${value}`);
+};
+const filterOption = (input, option) => {
+  // 正确访问选项的 label（对应 item.name）和 phone
+  const name = option.label || ''; // 对应 :label="item.name"
+  const phone = option.data?.phone || ''; // 通过 data 传递额外字段
+
+  return (
+    name.toLowerCase().includes(input.toLowerCase()) ||
+    phone.includes(input)
+  );
+};
 </script>
 
 <template>
   <div class="home flex">
-    <div class="flex-1 mr-10">
+    <div class="flex-1 mr-0">
       <!-- 快捷筛选区域 -->
-      <div class="filter-section">
-        <span class="section-title">快捷筛选：</span>
+      <div class="filter-section mb-2">
+        <span class="section-title mt-0.5">快捷筛选：</span>
         <div class="quick-filters">
           <a-button v-for="filter in quickFilters" :key="filter.id" :type="filter.selected ? 'primary' : 'default'"
             class="filter-btn" @click="selectQuickFilter(filter)">
@@ -264,7 +279,7 @@ const removeCondition = (type, id) => {
 
       <!-- 常规筛选条件 -->
       <div class="filter-section">
-        <span class="section-title">筛选条件：</span>
+        <span class="section-title mt-0.5">筛选条件：</span>
         <div class="standard-filters">
           <checkbox-filter v-model:checkedValues="selectedValues" :options="customOptions" label="意向度"
             @change="handleIntentionChange" type="checkbox" />
@@ -281,6 +296,9 @@ const removeCondition = (type, id) => {
             @radioChange="handleCourseChange" type="radio" />
           <checkbox-filter ref="childRef" category="stu" placeholder="请输入推荐人" v-model:checkedValues="selectStuVals"
             :options="stuListOptions" label="推荐人" @radioChange="handleReferenceChange" type="radio" />
+           
+            
+            
         </div>
       </div>
 
@@ -325,12 +343,63 @@ const removeCondition = (type, id) => {
       </div>
     </div>
     <div class="w-100">
-      搜索框
+      <div class="selectBox flex ">
+        <div class="label">学员/电话</div>
+        <div>
+          <a-select v-model:value="searchKey" :filter-option="filterOption" show-search placeholder="搜索姓名/手机号"
+            style="width: 240px" @change="handleChange" option-label-prop="label">
+            <a-select-option v-for="(item) in stuListOptions" :key="item.id" :value="item.id" :data="item"
+              :label="item.name">
+              <div class="flex flex-center mb-1">
+                <div>
+                  <img class="w-10 rounded-10"
+                    src="https://prod-cdn.schoolpal.cn/training/next-erp/shared/static/images/defaultimg/default_avator.png"
+                    alt="">
+                </div>
+                <div class="ml-2 mr-3">
+                  <div class="text-sm text-#666  leading-7">{{ item.name }}</div>
+                  <div class="text-xs text-#888">{{ item.phone }}</div>
+                </div>
+                <div>
+                  <a-tag :bordered="false" color="processing">在读学员</a-tag>
+                </div>
+              </div>
+            </a-select-option>
+
+          </a-select>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.selectBox {
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.selectBox .label {
+  border: 1px solid #d9d9d9;
+  height: 32px;
+  padding: 0 10px;
+  line-height: 32px;
+  text-align: left;
+  width: 100px;
+  border-radius: 6px;
+  border-radius: 8px 0 0 8px !important;
+  color: #222;
+  font-size: 14px;
+  min-width: 104px;
+  padding-left: 8px;
+  padding-right: 16px;
+}
+
+:deep(.selectBox .ant-select-selector) {
+  border-left: none !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
 .home {
   padding: 24px;
   background: #ffffff;
@@ -348,8 +417,7 @@ const removeCondition = (type, id) => {
 
 .filter-section {
   display: flex;
-  align-items: center;
-  margin-bottom: 12px;
+  align-items: flex-start;
 }
 
 .section-title {
@@ -364,6 +432,7 @@ const removeCondition = (type, id) => {
 
 .standard-filters {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .selected-conditions {
