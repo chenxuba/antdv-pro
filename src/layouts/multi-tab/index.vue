@@ -176,7 +176,7 @@ onUnmounted(() => {
   }
 .pro-ant-multi-tab {
   transition: all .3s;
-
+  background: #f7f7fb;
   // .ant-tabs-nav-operations {
   //   display: none !important;
   // }

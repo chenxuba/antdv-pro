@@ -34,7 +34,7 @@
             <div class="text-xs text-#888">{{ item.phone ?? '' }}</div>
           </a-menu-item>
         </div>
-        <div class="max-h-80 overflow-auto scrollbar" v-if="category == 'stu'">
+        <div class="max-h-70 overflow-auto scrollbar" v-if="category == 'stu'">
           <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
             :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
             <div class="flex flex-center mb-2">
@@ -192,7 +192,7 @@ const handleRangePicker = (dates) => {
 
 <!-- 保留原有样式或根据需要添加 scoped 样式 -->
 <style lang="less" scoped>
-@import url(@/assets/styles/common.css);
+@import url(~@/assets/styles/common.css);
 
 .num {
   background: #f33;

@@ -51,8 +51,8 @@ export default [
     ],
   },
   {
-    path: '/form',
-    redirect: '/form/basic-form',
+    path: '/enroll-center',
+    redirect: '/enroll-center/basic-form',
     name: 'Form',
     meta: {
       title: '招生中心',
@@ -61,7 +61,7 @@ export default [
     component: basicRouteMap.RouteView,
     children: [
       {
-        path: '/form/basic-form',
+        path: '/enroll-center/basic-form',
         name: 'FormBasic',
         component: () => import('~/pages/form/basic-form/index.vue'),
         meta: {
@@ -70,15 +70,15 @@ export default [
         },
       },
       {
-        path: '/form/step-form',
-        name: 'FormStep',
-        component: () => import('~/pages/form/step-form/index.vue'),
+        path: '/enroll-center/intention-student',
+        name: 'Intention-student',
+        component: () => import('~/pages/enroll-center/intention-student.vue'),
         meta: {
           title: '意向学员',
         },
       },
       {
-        path: '/form/advanced-form',
+        path: '/enroll-center/advanced-form',
         name: 'FormAdvanced',
         component: () => import('~/pages/form/advanced-form/index.vue'),
         meta: {
@@ -86,7 +86,7 @@ export default [
         },
       },
       {
-        path: '/form/advanced-form2',
+        path: '/enroll-center/advanced-form2',
         name: 'FormAdvanced2',
         component: () => import('~/pages/form/advanced-form/index.vue'),
         meta: {
