@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, computed } from 'vue';
-import { DownOutlined, CaretDownOutlined, CaretUpOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { DownOutlined, CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons-vue';
 import allIntentionStudentFilter from '~@/components/enroll-center/all-intention-student-filter.vue';
 import customizeCode from '~@/components/enroll-center/customize-code.vue';
 const activeKey = ref('1');
@@ -243,12 +243,13 @@ watch(selectedValues, (newVal) => {
 const totalWidth = computed(() =>
   filteredColumns.value.reduce((acc, column) => acc + (column.width || 0), 0)
 );
-const displayArray = ref(['intention','followStatus','sex','createPeo','createTime','intentionCourse','reference'])
+const displayArray = ref(['intention','followStatus','sex','createPeo','createTime','intentionCourse','reference','department'])
+
 </script>
 
 <template>
   <div class="tab-content">
-    <all-intention-student-filter :displayArray="displayArray"></all-intention-student-filter>
+    <all-intention-student-filter :displayArray="displayArray" type="dpt"></all-intention-student-filter>
     <div class="tab-table">
       <div class="table-title flex justify-between">
         <div class="total">当前共{{ dataSource.length }}名学员</div>
@@ -303,17 +304,8 @@ const displayArray = ref(['intention','followStatus','sex','createPeo','createTi
         </div>
       </div>
       <div class="table-content mt-2">
-        <a-table :dataSource="dataSource" :pagination="false" :columns="filteredColumns" :row-selection="rowSelection"
+        <a-table :dataSource="dataSource" :columns="filteredColumns" :row-selection="rowSelection"
           :scroll="{ x: totalWidth }">
-          <template #headerCell="{ column }">
-            <template v-if="column.key === 'status'">
-              <span class="mr-1">{{ column.title }}</span>
-              <a-tooltip color="#666">
-                <template #title>跟进状态为手动标记，仅为区分跟进状态，与学员实际系统状态无关</template>
-                <ExclamationCircleOutlined />
-              </a-tooltip>
-            </template>
-          </template>
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'name'">
               <div class="flex">

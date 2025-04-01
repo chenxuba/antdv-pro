@@ -3,12 +3,19 @@
     :arrow="true">
     <template #overlay>
       <a-menu>
-        <a-menu-item class="check-item">
+        <a-menu-item class="top-item" v-if="showSearch">
+          <!-- 搜索栏 -->
+          <a-input class="mt-1 mb-2 w-30" v-model:value="searchChannelCategory" autofocus :placeholder="placeholder" />
+        </a-menu-item>
+        <a-menu-item class="check-item" v-if="filteredOptions.length > 0">
           <a-checkbox-group class="vertical-checkbox-group" v-model:value="checkedValues">
-            <a-checkbox v-for="item in options" :key="item.id" :value="item.id" @change="handleChange">
+            <a-checkbox v-for="item in filteredOptions" :key="item.id" :value="item.id" @change="handleChange">
               {{ item.value }}
             </a-checkbox>
           </a-checkbox-group>
+        </a-menu-item>
+        <a-menu-item v-if="filteredOptions.length == 0">
+          <a-empty :image-style="{ width: '80px' }" :image="simpleImage" />
         </a-menu-item>
       </a-menu>
     </template>
@@ -24,8 +31,10 @@
       <a-menu>
         <a-menu-item class="top-item">
           <!-- 搜索栏 -->
-          <a-input v-if="category == 'course' || category == 'teacher'" class="mt-1 mb-2 w-27" v-model:value="searchPeo" autofocus :placeholder="placeholder" />
-          <a-input v-if="category == 'stu'" class="mt-1 mb-2 w-59" v-model:value="searchPeo" autofocus :placeholder="placeholder" />
+          <a-input v-if="category == 'course' || category == 'teacher'" class="mt-1 mb-2 w-27" v-model:value="searchPeo"
+            autofocus :placeholder="placeholder" />
+          <a-input v-if="category == 'stu'" class="mt-1 mb-2 w-59" v-model:value="searchPeo" autofocus
+            :placeholder="placeholder" />
         </a-menu-item>
         <div class="max-h-80 overflow-auto scrollbar" v-if="category == 'course' || category == 'teacher'">
           <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
@@ -48,7 +57,7 @@
                 <div class="text-xs text-#888">{{ item.phone ?? '' }}</div>
               </div>
               <div>
-                <a-tag  :bordered="false" color="processing">在读学员</a-tag>
+                <a-tag :bordered="false" color="processing">在读学员</a-tag>
               </div>
             </div>
           </a-menu-item>
@@ -73,6 +82,26 @@
         v-model:value="selectDates" />
     </a-button>
   </a-dropdown>
+  <a-dropdown v-if="type == 'tree'" :trigger="['click']" v-model:open="visible" placement="bottomLeft" :arrow="true">
+    <template #overlay>
+      <a-menu>
+        <a-tree-select v-model:value="checkedValues" show-search style="width: 200px"
+          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="请选择部门" tree-default-expand-all
+          :tree-data="options" :fieldNames="{ children: 'children', label: 'name', value: 'id' }"
+          tree-node-filter-prop="name">
+          <template #title="{ value: id, name }">
+            <b v-if="id === 1" style="color: #08c">sss</b>
+            <template v-else>{{ name }}</template>
+          </template>
+        </a-tree-select>
+      </a-menu>
+    </template>
+    <a-button class="h-28px flex filter-btn mr-2 mb-2">
+      {{ label }}
+      <div v-if="checkedValues" class="num">1</div>
+      <DownOutlined v-else :style="{ fontSize: '10px' }" />
+    </a-button>
+  </a-dropdown>
 </template>
 
 <script setup>
@@ -80,7 +109,8 @@ import { ref, computed, watch, defineExpose, toRaw } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
-
+import { Empty } from 'ant-design-vue';
+const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 // 指定禁用之前的日期（例如：2023-01-01）
 let specifiedDate = null;
 
@@ -97,11 +127,16 @@ const calendarChangeFun = (e) => {
   specifiedDate = new Date(e[0])
 }
 const searchPeo = ref('');
+const searchChannelCategory = ref('');
 const selectDates = ref([])
 const pickerKey = ref(0);
 // 监听输入变化
 watch(searchPeo, (newVal) => {
   debouncedSearch(newVal);
+});
+// 监听输入变化
+watch(searchChannelCategory, (newVal) => {
+  debouncedSearchCategory(newVal);
 });
 // 暴露清空方法给父组件
 const resetSearch = () => {
@@ -116,10 +151,24 @@ const doSearch = () => {
   console.log('执行搜索:', searchPeo.value);
   // 这里替换为真实的搜索逻辑
 };
-
+// 实际搜索逻辑
+const doSearchCategory = () => {
+  console.log('执行搜索:', searchChannelCategory.value);
+  // 这里替换为真实的搜索逻辑
+};
 // 创建防抖函数（500ms延迟）
 const debouncedSearch = debounce(doSearch, 500);
+const debouncedSearchCategory = debounce(doSearchCategory, 500);
+// 过滤后的选项列表（使用 computed 实现）
+const filteredOptions = computed(() => {
+  const searchText = searchChannelCategory.value.trim().toLowerCase();
 
+  if (!searchText) return props.options;
+
+  return props.options.filter(option =>
+    option.value.toLowerCase().includes(searchText)
+  );
+});
 // 组件卸载前清理
 onBeforeUnmount(() => {
   debouncedSearch.cancel();
@@ -153,6 +202,10 @@ const props = defineProps({
     type: String,
     default: 'stu'
   },
+  showSearch: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const emit = defineEmits(['update:checkedValues', 'change', 'radioChange', 'datePickerChange']);
@@ -223,12 +276,12 @@ const handleRangePicker = (dates) => {
 
 :deep(.ant-dropdown-menu-item.menu-item) {
   &:hover {
-    background-color: #dee6fc !important;
+    background-color: var(--pro-ant-color-primary-bg-hover) !important;
   }
 }
 
 :deep(.active) {
-  background-color: #ebf0fe !important;
+  background-color: var(--pro-ant-color-primary-bg-hover) !important;
 }
 
 :deep(.top-item) {
@@ -240,6 +293,10 @@ const handleRangePicker = (dates) => {
   opacity: 0;
   position: absolute;
   left: -10px !important;
+}
+
+:deep(.ant-select-tree-node-selected) {
+  width: 140px !important;
 }
 </style>
 <style lang="less">
