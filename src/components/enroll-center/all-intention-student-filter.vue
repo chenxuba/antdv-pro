@@ -286,7 +286,7 @@ const orderedConditions = computed(() => {
 // 清空所有筛选
 const clearAll = () => {
   // 重置多选类
-  [selectedValues, followStatusVals, sexVals, createTimeVals, selectChannelVals].forEach(
+  [selectedValues, followStatusVals, sexVals, createTimeVals, selectChannelVals,selectChannelCategoryVals,selectChannelTypeVals].forEach(
     ref => ref.value = []
   );
   // 重置单选类
@@ -309,6 +309,15 @@ const removeCondition = (type, id) => {
       break;
     case 'sex':
       sexVals.value = [];
+      break;
+      case 'channelStatus':
+      selectChannelVals.value = [];
+      break;
+      case 'channelCategory':
+      selectChannelCategoryVals.value = [];
+      break;
+      case 'channelType':
+      selectChannelTypeVals.value = [];
       break;
     case 'quick':
       const filter = quickFilters.value.find(q => q.id === id);
