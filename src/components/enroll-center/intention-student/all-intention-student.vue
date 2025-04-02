@@ -1,8 +1,6 @@
 <script setup>
 import { ref, watch, computed } from 'vue';
 import { DownOutlined, CaretDownOutlined, CaretUpOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import allIntentionStudentFilter from '~@/components/enroll-center/all-intention-student-filter.vue';
-import customizeCode from '~@/components/enroll-center/customize-code.vue';
 const activeKey = ref('1');
 const activeKey2 = ref('1');
 const dataSource = ref([
@@ -248,7 +246,7 @@ const displayArray = ref(['intention','followStatus','sex','createPeo','createTi
 
 <template>
   <div class="tab-content">
-    <all-intention-student-filter :displayArray="displayArray"></all-intention-student-filter>
+    <all-filter :displayArray="displayArray"></all-filter>
     <div class="tab-table">
       <div class="table-title flex justify-between">
         <div class="total">当前共{{ dataSource.length }}名学员</div>

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, nextTick } from 'vue';
 import { DeleteOutlined, CloseOutlined } from '@ant-design/icons-vue';
-import checkboxFilter from "~@/components/common/checkboxFilter.vue";
 const getNameById = (id) => {
   const search = (nodes) => {
     for (const node of nodes) {
@@ -362,6 +361,10 @@ const props = defineProps({
   displayArray:{
     type: Array,
     default:()=>{return []}
+  },
+  isShowSearchStuPhone:{
+    type: Boolean,
+    default: true
   }
 });
 </script>
@@ -380,7 +383,7 @@ const props = defineProps({
             </a-button>
           </div>
         </div>
-        <div class="w-100 mt--1">
+        <div class="w-100 mt--1" v-if="isShowSearchStuPhone">
           <div class="selectBox flex ">
             <div class="label">学员/电话</div>
             <div>

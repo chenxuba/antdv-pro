@@ -78,9 +78,9 @@ export default [
         },
       },
       {
-        path: '/enroll-center/advanced-form',
-        name: 'FormAdvanced',
-        component: () => import('~/pages/form/advanced-form/index.vue'),
+        path: '/enroll-center/follow-up-list',
+        name: 'FollowUpList',
+        component: () => import('~/pages/enroll-center/follow-up-list.vue'),
         meta: {
           title: '跟进记录',
         },

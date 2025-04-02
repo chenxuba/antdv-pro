@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import allIntentionStudentFilter from '~@/components/enroll-center/all-intention-student-filter.vue';
 const dataSource = ref([
   {
     id: 0,
@@ -169,7 +168,7 @@ const displayArray = ref(['channelCategory','channelStatus','channelType'])
 
 <template>
   <div class="tab-content">
-    <all-intention-student-filter :displayArray="displayArray" :isQuickShow="false"></all-intention-student-filter>
+    <all-filter :displayArray="displayArray" :isQuickShow="false"></all-filter>
     <div class="tab-table">
       <div class="table-title flex justify-between">
         <div class="total">共{{ dataSource.length }}个渠道</div>
