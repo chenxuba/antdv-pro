@@ -86,9 +86,9 @@ export default [
         },
       },
       {
-        path: '/enroll-center/advanced-form2',
+        path: '/enroll-center/try-listening',
         name: 'FormAdvanced2',
-        component: () => import('~/pages/form/advanced-form/index.vue'),
+        component: () => import('~/pages/enroll-center/try-listening.vue'),
         meta: {
           title: '试听管理',
         },
@@ -96,18 +96,18 @@ export default [
     ],
   },
   {
-    path: '/exception',
-    redirect: '/exception/403',
-    name: 'Exception',
+    path: '/edu-center',
+    redirect: '/edu-center/registr-renewal',
+    name: 'EduCenter',
     meta: {
       title: '教务中心',
       icon: 'WarningOutlined',
     },
     children: [
       {
-        path: '/exception/403',
-        name: 'Exception403',
-        component: () => import('~/pages/exception/403.vue'),
+        path: '/edu-center/registr-renewal',
+        name: 'RegistrRenewal',
+        component: () => import('~/pages/edu-center/registr-renewal.vue'),
         meta: {
           title: '报名续费',
         },

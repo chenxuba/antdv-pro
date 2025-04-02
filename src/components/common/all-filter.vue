@@ -441,7 +441,6 @@ const props = defineProps({
             @change="handleChannelTypeChange" type="checkbox" />
         </div>
       </div>
-
       <!-- 已选条件展示 -->
       <div class="selected-conditions" v-if="orderedConditions.length > 0 || type == 'dpt'">
         <span class="section-title">已选条件：</span>
