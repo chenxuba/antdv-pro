@@ -2,12 +2,16 @@
 import { ref } from 'vue';
 const activeKey = ref('1');
 const activeKey2 = ref('1');
+const publicDataIsShow = ref(true)
+const diaplayPublicDataFun = (e)=>{
+  publicDataIsShow.value = e
+}
 </script>
 
 <template>
   <div class="home">
     <div class="tabs">
-      <a-tabs animated v-model:activeKey="activeKey" :tabBarStyle="{
+      <a-tabs :animated="publicDataIsShow" v-model:activeKey="activeKey" :tabBarStyle="{
         'border-bottom-left-radius': '0px',
         'border-bottom-right-radius': '0px'
       }">
@@ -27,13 +31,15 @@ const activeKey2 = ref('1');
             </a-tab-pane>
           </a-tabs>
         </a-tab-pane>
-        <a-tab-pane key="2" tab="公有池">
+        <a-tab-pane v-if="publicDataIsShow" key="2" tab="公有池">
           <public-pool></public-pool>
         </a-tab-pane>
         <a-tab-pane key="3" tab="渠道管理">
           <channel-management></channel-management>
         </a-tab-pane>
-        <a-tab-pane key="4" tab="设置">设置</a-tab-pane>
+        <a-tab-pane key="4" tab="设置">
+          <setting @diaplayPublicData="diaplayPublicDataFun"></setting>
+        </a-tab-pane>
       </a-tabs>
     </div>
   </div>

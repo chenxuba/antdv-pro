@@ -36,3 +36,25 @@ body{
 *, :after, :before{
   box-sizing: border-box;
 }
+.ant-modal-content{
+  padding: 0 !important;
+}
+.ant-modal-header{
+  padding: 12px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.ant-modal-header .ant-modal-title{
+  font-size: 20px;
+}
+.ant-modal-body {
+  word-wrap: break-word;
+  font-size: 14px;
+  padding: 24px;
+}
+.ant-modal-footer {
+  background: transparent;
+  border-radius: 0 0 8px 8px;
+  border-top: 1px solid #eee;
+  padding: 10px 16px;
+  text-align: right;
+}
