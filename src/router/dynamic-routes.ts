@@ -3,7 +3,7 @@ import { basicRouteMap } from './router-modules'
 
 export default [
   {
-    path: '/dashboard/homepage',
+    path: '/dashboard',
     name: 'Homepage',
     parentKeys: [],
     meta: {
@@ -13,7 +13,7 @@ export default [
     component: () => import('~/pages/dashboard/homepage/index.vue'),
   },
   {
-    path: '/dashboard',
+    path: '/dashboard/analysis',
     redirect: '/dashboard/analysis',
     name: 'Dashboard',
     meta: {
