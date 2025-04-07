@@ -5,48 +5,21 @@
     </div>
     <div v-if="current == 0" class="current0">
       <div class="step student h-34 bg-white rounded-4 mt-3 justify-start p-6">
-        <custom-title
-          class="mb-4"
-          title="学员"
-          font-size="20px"
-          font-weight="500"
-        ></custom-title>
-        <a-form
-          v-if="formState.id == undefined"
-          :model="formState"
-          name="basic"
-        >
-          <a-form-item
-            label="搜索/选择学员："
-            name="id"
-            :rules="[{ required: true, message: '请选择学员' }]"
-          >
+        <custom-title class="mb-4" title="学员" font-size="20px" font-weight="500"></custom-title>
+        <a-form v-if="formState.id == undefined" :model="formState" name="basic">
+          <a-form-item label="搜索/选择学员：" name="id" :rules="[{ required: true, message: '请选择学员' }]">
             <div class="selectBox flex">
               <div class="flex">
-                <a-select
-                  v-model:value="formState.id"
-                  :filter-option="filterOption"
-                  show-search
-                  placeholder="搜索姓名/手机号"
-                  style="width: 360px"
-                  @change="handleChange"
-                  option-label-prop="label"
-                >
-                  <a-select-option
-                    v-for="item in stuListOptions"
-                    :key="item.id"
-                    :value="item.id"
-                    :data="item"
-                    :label="item.name"
-                  >
+                <a-select v-model:value="formState.id" :filter-option="filterOption" show-search placeholder="搜索姓名/手机号"
+                  style="width: 360px" @change="handleChange" option-label-prop="label">
+                  <a-select-option v-for="item in stuListOptions" :key="item.id" :value="item.id" :data="item"
+                    :label="item.name">
                     <div class="flex flex-center mb-1 justify-between">
                       <div class="flex flex-center">
                         <div>
-                          <img
-                            class="w-10 rounded-10"
+                          <img class="w-10 rounded-10"
                             src="https://prod-cdn.schoolpal.cn/training/next-erp/shared/static/images/defaultimg/default_avator.png"
-                            alt=""
-                          />
+                            alt="" />
                         </div>
                         <div class="ml-2 mr-3">
                           <div class="text-sm text-#666 leading-7">
@@ -56,9 +29,7 @@
                         </div>
                       </div>
                       <div>
-                        <a-tag :bordered="false" color="processing"
-                          >在读学员</a-tag
-                        >
+                        <a-tag :bordered="false" color="processing">在读学员</a-tag>
                       </div>
                     </div>
                   </a-select-option>
@@ -72,253 +43,118 @@
         <div class="stuInfo mt-2 flex" v-if="formState.id">
           <div class="flex">
             <div class="avatar mr-4">
-              <img
-                src="https://cdn.schoolpal.cn/schoolpal/next-erp/avator_female.png"
-                alt=""
-              />
+              <img src="https://cdn.schoolpal.cn/schoolpal/next-erp/avator_female.png" alt="" />
             </div>
             <div class="name text-5 mr-4">妞妞</div>
             <div class="phone text-4 mr-5">176****1636</div>
             <a-tag color="orange">意向学员</a-tag>
           </div>
           <div class="btn">
-            <a-popconfirm
-              title="提示：“更换学员”后会重置“订单设置”的内容。"
-              ok-text="我知道了"
-              cancel-text="再想想"
-              @confirm="confirm"
-            >
+            <a-popconfirm title="提示：“更换学员”后会重置“订单设置”的内容。" ok-text="我知道了" cancel-text="再想想" @confirm="confirm">
               <a-button type="primary" ghost>更换学员</a-button>
             </a-popconfirm>
           </div>
         </div>
       </div>
       <div class="step bg-white rounded-4 mt-3 justify-start p-6">
-        <custom-title
-          class="mb-2"
-          title="办理内容"
-          font-size="20px"
-          font-weight="500"
-        ></custom-title>
+        <custom-title class="mb-2" title="办理内容" font-size="20px" font-weight="500"></custom-title>
         <div v-if="!activeCourseOver" class="select-box flex flex-center">
           <div class="select flex flex-col flex-center">
             <svg width="64px" height="64px" viewBox="0 0 64 64">
               <title>编组_4</title>
-              <g
-                id="\u9875\u9762-1"
-                stroke="none"
-                stroke-width="1"
-                fill="none"
-                fill-rule="evenodd"
-              >
-                <g
-                  id="\u62A5\u540D-\u751F\u6210\u8BA2\u5355"
-                  transform="translate(-492.000000, -394.000000)"
-                >
-                  <g
-                    id="\u7F16\u7EC4-4"
-                    transform="translate(492.000000, 394.000000)"
-                  >
-                    <rect
-                      id="\u77E9\u5F62"
-                      fill="#E6F0FF"
-                      fill-rule="nonzero"
-                      x="0"
-                      y="0"
-                      width="64"
-                      height="64"
-                      rx="21.3333333"
-                    ></rect>
-                    <g
-                      id="\u7F16\u7EC4"
-                      transform="translate(14.000000, 14.000000)"
-                    >
-                      <ellipse
-                        id="\u692D\u5706\u5F62"
-                        fill="#0F8BF3"
-                        opacity="0.149130394"
-                        cx="18"
-                        cy="33.75"
-                        rx="18"
-                        ry="2.25"
-                        style="mix-blend-mode: multiply"
-                      ></ellipse>
+              <g id="\u9875\u9762-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="\u62A5\u540D-\u751F\u6210\u8BA2\u5355" transform="translate(-492.000000, -394.000000)">
+                  <g id="\u7F16\u7EC4-4" transform="translate(492.000000, 394.000000)">
+                    <rect id="\u77E9\u5F62" fill="#E6F0FF" fill-rule="nonzero" x="0" y="0" width="64" height="64"
+                      rx="21.3333333"></rect>
+                    <g id="\u7F16\u7EC4" transform="translate(14.000000, 14.000000)">
+                      <ellipse id="\u692D\u5706\u5F62" fill="#0F8BF3" opacity="0.149130394" cx="18" cy="33.75" rx="18"
+                        ry="2.25" style="mix-blend-mode: multiply"></ellipse>
                       <path
                         d="M2.25,31.5 C2.25,30.6944444 2.25,29.8888889 2.25,29.0833333 L2.25,6.91666667 C2.25,4.33933783 4.33933783,2.25 6.91666667,2.25 L31.4166667,2.25 C32.7053311,2.25 33.75,3.29466892 33.75,4.58333333 L33.75,27 C33.75,30.7279221 30.7279221,33.75 27,33.75 L4.5,33.75 C3.25735931,33.75 2.25,32.7426407 2.25,31.5 Z"
-                        id="\u8DEF\u5F84"
-                        fill="#607EF5"
-                      ></path>
+                        id="\u8DEF\u5F84" fill="#607EF5"></path>
                       <path
                         d="M30.2884615,1.125 C31.5788961,1.125 32.625,2.16833643 32.625,3.45535714 L32.625,25.7869201 C32.6233831,28.8928905 30.10597,31.4110272 27.0000002,31.4135368 L8.0048076,31.4189962 C6.76241968,31.42 5.75545445,32.4272547 5.75480769,33.6696429 L5.75480769,33.75 L5.75480769,33.75 L4.5,33.75 C3.25735931,33.75 2.25,32.7426407 2.25,31.5 L2.25,4.62053571 L2.25,4.62053571 C2.25,2.69000465 3.81915585,1.125 5.75480769,1.125 L30.2884615,1.125 Z"
-                        id="\u8DEF\u5F84\u5907\u4EFD-2"
-                        fill="#2547CC"
-                      ></path>
+                        id="\u8DEF\u5F84\u5907\u4EFD-2" fill="#2547CC"></path>
                       <path
                         d="M26.4375,1.39888101e-14 C27.6801407,1.39888101e-14 28.6875,1.00735931 28.6875,2.25 L28.6875,24.7425436 C28.6875,27.227825 26.6727814,29.2425436 24.1875,29.2425436 L5.0625,29.2425436 L5.0625,29.2425436 C3.59988876,29.2425436 2.39803946,30.3589982 2.26268507,31.7861744 C2.25428654,31.6900981 2.25,31.5918214 2.25,31.4925436 L2.25,3.375 C2.25,1.51103897 3.76103897,1.39888101e-14 5.625,1.39888101e-14 L26.4375,1.39888101e-14 Z"
-                        id="\u8DEF\u5F84"
-                        fill="#2F59FF"
-                      ></path>
+                        id="\u8DEF\u5F84" fill="#2F59FF"></path>
                       <path
                         d="M29.3936098,0 C30.556937,0 31.5,0.99041396 31.5,2.2121515 L31.5,24.75 C31.5,27.2352814 29.4852814,29.25 27,29.25 L6.76187542,29.25 L6.76187542,29.25 L6.75,0 L29.3936098,0 Z"
-                        id="\u8DEF\u5F84\u5907\u4EFD"
-                        fill="#5D95FF"
-                      ></path>
+                        id="\u8DEF\u5F84\u5907\u4EFD" fill="#5D95FF"></path>
                       <path
                         d="M19.125,3.375 L25.875,3.375 L25.875,13.5 L23.1240377,11.6660251 C22.7461509,11.4141006 22.2538491,11.4141006 21.8759623,11.6660251 L19.125,13.5 L19.125,13.5 L19.125,3.375 Z"
-                        id="\u77E9\u5F62"
-                        fill="#FFFFFF"
-                      ></path>
+                        id="\u77E9\u5F62" fill="#FFFFFF"></path>
                     </g>
                   </g>
                 </g>
               </g>
             </svg>
-            <a-button class="mt-4" type="primary" @click="handleSelect(1)"
-              >按课程/学杂费/教材商品选择</a-button
-            >
+            <a-button class="mt-4" type="primary" @click="handleSelect(1)">按课程/学杂费/教材商品选择</a-button>
           </div>
           <div class="select ml-4 flex flex-col flex-center">
             <svg width="64px" height="64px" viewBox="0 0 64 64">
               <title>编组_7</title>
-              <g
-                id="\u9875\u9762-1"
-                stroke="none"
-                stroke-width="1"
-                fill="none"
-                fill-rule="evenodd"
-              >
-                <g
-                  id="\u62A5\u540D-\u751F\u6210\u8BA2\u5355"
-                  transform="translate(-676.000000, -394.000000)"
-                >
-                  <g
-                    id="\u7F16\u7EC4-7"
-                    transform="translate(676.000000, 394.000000)"
-                  >
-                    <rect
-                      id="\u77E9\u5F62\u5907\u4EFD"
-                      fill="#CFEE9F"
-                      fill-rule="nonzero"
-                      opacity="0.332462754"
-                      x="0"
-                      y="0"
-                      width="64"
-                      height="64"
-                      rx="21.3333333"
-                    ></rect>
-                    <g
-                      id="\u7F16\u7EC4"
-                      transform="translate(14.000000, 14.000000)"
-                    >
-                      <ellipse
-                        id="\u692D\u5706\u5F62"
-                        fill="#63B228"
-                        opacity="0.191826615"
-                        cx="18"
-                        cy="33.75"
-                        rx="18"
-                        ry="2.25"
-                        style="mix-blend-mode: multiply"
-                      ></ellipse>
+              <g id="\u9875\u9762-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="\u62A5\u540D-\u751F\u6210\u8BA2\u5355" transform="translate(-676.000000, -394.000000)">
+                  <g id="\u7F16\u7EC4-7" transform="translate(676.000000, 394.000000)">
+                    <rect id="\u77E9\u5F62\u5907\u4EFD" fill="#CFEE9F" fill-rule="nonzero" opacity="0.332462754" x="0"
+                      y="0" width="64" height="64" rx="21.3333333"></rect>
+                    <g id="\u7F16\u7EC4" transform="translate(14.000000, 14.000000)">
+                      <ellipse id="\u692D\u5706\u5F62" fill="#63B228" opacity="0.191826615" cx="18" cy="33.75" rx="18"
+                        ry="2.25" style="mix-blend-mode: multiply"></ellipse>
                       <path
                         d="M1.125,32.625 L1.125,2.25 C1.125,1.05913601 2.05016159,0.084355084 3.22095119,0.00519081254 L3.375,0 C4.61764069,-2.28269391e-16 5.625,1.00735931 5.625,2.25 L5.625,32.625 C5.625,33.815864 4.69983841,34.7906449 3.52904881,34.8698092 L3.375,34.875 C2.13235931,34.875 1.125,33.8676407 1.125,32.625 Z"
-                        id="\u5F62\u72B6\u7ED3\u5408"
-                        fill="#63B228"
-                      ></path>
+                        id="\u5F62\u72B6\u7ED3\u5408" fill="#63B228"></path>
                       <path
                         d="M5.625,2.25 L31.5,2.25 C33.9852814,2.25 36,4.26471863 36,6.75 L36,24.75 C36,27.2352814 33.9852814,29.25 31.5,29.25 L5.625,29.25 L5.625,29.25 L5.625,2.25 Z"
-                        id="\u77E9\u5F62\u5907\u4EFD-50"
-                        fill="#63B228"
-                      ></path>
+                        id="\u77E9\u5F62\u5907\u4EFD-50" fill="#63B228"></path>
                       <path
                         d="M5.625,2.25 L31.5,2.25 C33.9852814,2.25 36,4.26471863 36,6.75 L36,22.5 C36,24.9852814 33.9852814,27 31.5,27 L5.625,27 L5.625,27 L5.625,2.25 Z"
-                        id="\u77E9\u5F62\u5907\u4EFD-51"
-                        fill="#88D510"
-                      ></path>
+                        id="\u77E9\u5F62\u5907\u4EFD-51" fill="#88D510"></path>
                       <path
                         d="M3.375,0 C4.61764069,-2.28269391e-16 5.625,1.00735931 5.625,2.25 L5.625,32.625 C5.625,33.8676407 4.61764069,34.875 3.375,34.875 L3.375,34.875 L3.375,34.875 L3.375,0 Z"
-                        id="\u77E9\u5F62\u5907\u4EFD-52"
-                        fill="#88D510"
-                        opacity="0.5"
-                      ></path>
-                      <circle
-                        id="\u692D\u5706\u5F62\u5907\u4EFD-11"
-                        fill="#FFFFFF"
-                        opacity="0.5"
-                        cx="12.4060826"
-                        cy="10.6875"
-                        r="2.8125"
-                      ></circle>
+                        id="\u77E9\u5F62\u5907\u4EFD-52" fill="#88D510" opacity="0.5"></path>
+                      <circle id="\u692D\u5706\u5F62\u5907\u4EFD-11" fill="#FFFFFF" opacity="0.5" cx="12.4060826"
+                        cy="10.6875" r="2.8125"></circle>
                       <path
                         d="M12.375,14.625 C14.3225615,14.625 15.9846694,16.0330166 16.3048466,17.9540795 L16.6566752,20.0650511 C16.7588196,20.6779178 16.3447975,21.2575487 15.7319309,21.3596932 C15.670808,21.3698803 15.608948,21.375 15.546982,21.375 L9.20301797,21.375 C8.58169763,21.375 8.07801797,20.8713203 8.07801797,20.25 C8.07801797,20.188034 8.08313767,20.126174 8.09332481,20.0650511 L8.44515342,17.9540795 C8.76533056,16.0330166 10.4274385,14.625 12.375,14.625 Z"
-                        id="\u77E9\u5F62\u5907\u4EFD-47"
-                        fill="#FFFFFF"
-                        opacity="0.5"
-                      ></path>
-                      <circle
-                        id="\u692D\u5706\u5F62\u5907\u4EFD-12"
-                        fill="#FFFFFF"
-                        cx="19.1560826"
-                        cy="10.6875"
-                        r="2.8125"
-                      ></circle>
-                      <circle
-                        id="\u692D\u5706\u5F62\u5907\u4EFD-13"
-                        fill="#FFFFFF"
-                        opacity="0.600000024"
-                        cx="25.9060826"
-                        cy="10.6875"
-                        r="2.8125"
-                      ></circle>
+                        id="\u77E9\u5F62\u5907\u4EFD-47" fill="#FFFFFF" opacity="0.5"></path>
+                      <circle id="\u692D\u5706\u5F62\u5907\u4EFD-12" fill="#FFFFFF" cx="19.1560826" cy="10.6875"
+                        r="2.8125"></circle>
+                      <circle id="\u692D\u5706\u5F62\u5907\u4EFD-13" fill="#FFFFFF" opacity="0.600000024"
+                        cx="25.9060826" cy="10.6875" r="2.8125"></circle>
                       <path
                         d="M25.875,14.625 C27.8225615,14.625 29.4846694,16.0330166 29.8048466,17.9540795 L30.1566752,20.0650511 C30.2588196,20.6779178 29.8447975,21.2575487 29.2319309,21.3596932 C29.170808,21.3698803 29.108948,21.375 29.046982,21.375 L22.703018,21.375 C22.0816976,21.375 21.578018,20.8713203 21.578018,20.25 C21.578018,20.188034 21.5831377,20.126174 21.5933248,20.0650511 L21.9451534,17.9540795 C22.2653306,16.0330166 23.9274385,14.625 25.875,14.625 Z"
-                        id="\u77E9\u5F62\u5907\u4EFD-53"
-                        fill="#FFFFFF"
-                        opacity="0.600000024"
-                      ></path>
+                        id="\u77E9\u5F62\u5907\u4EFD-53" fill="#FFFFFF" opacity="0.600000024"></path>
                       <path
                         d="M19.125,14.625 C21.0725615,14.625 22.7346694,16.0330166 23.0548466,17.9540795 L23.4066752,20.0650511 C23.5088196,20.6779178 23.0947975,21.2575487 22.4819309,21.3596932 C22.420808,21.3698803 22.358948,21.375 22.296982,21.375 L15.953018,21.375 C15.3316976,21.375 14.828018,20.8713203 14.828018,20.25 C14.828018,20.188034 14.8331377,20.126174 14.8433248,20.0650511 L15.1951534,17.9540795 C15.5153306,16.0330166 17.1774385,14.625 19.125,14.625 Z"
-                        id="\u77E9\u5F62\u5907\u4EFD-48"
-                        fill="#FFFFFF"
-                      ></path>
+                        id="\u77E9\u5F62\u5907\u4EFD-48" fill="#FFFFFF"></path>
                       <path
                         d="M5.625,27 L5.625,27 L5.625,27 L5.625,32.625 C5.625,33.8676407 4.61764069,34.875 3.375,34.875 L3.375,34.875 L3.375,34.875 L3.375,29.25 C3.375,28.0073593 4.38235931,27 5.625,27 Z"
-                        id="\u77E9\u5F62"
-                        fill="#469C06"
-                        opacity="0.900000036"
-                      ></path>
+                        id="\u77E9\u5F62" fill="#469C06" opacity="0.900000036"></path>
                     </g>
                   </g>
                 </g>
               </g>
             </svg>
-            <a-button class="mt-4 w-34 classes" type="primary"
-              >按班级选择</a-button
-            >
+            <a-button class="mt-4 w-34 classes" type="primary">按班级选择</a-button>
           </div>
         </div>
         <div class="conductContent mt-5" v-if="activeCourseOver">
-          <div
-            v-for="(_, index) in formData"
-            :key="index"
-            class="container-box mb-4"
-          >
+          <div v-for="(_, index) in formData" :key="index" class="container-box mb-4">
             <div class="container-box-top">
               <div class="flex flex-items-center">
                 <span class="font-600 text-#222 text-4">{{
                   _.courseName
-                }}</span>
+                  }}</span>
                 <span class="ml-4">
                   <a-tag color="#2db7f5" v-if="_.isCommon">通用课</a-tag>
                   <a-tag color="#87d068" v-if="_.isClass">班级授课</a-tag>
                   <a-tag color="#108ee9" v-if="_.courseType == 1">课时</a-tag>
                 </span>
                 <span class="ml-4">
-                  <a-select
-                    v-model:value="_.handleType"
-                    placeholder="请选择"
-                    style="width: 100px"
-                  >
+                  <a-select v-model:value="_.handleType" placeholder="请选择" style="width: 100px">
                     <a-select-option :value="0">无</a-select-option>
                     <a-select-option :value="1">新报</a-select-option>
                     <a-select-option :value="2">续费</a-select-option>
@@ -333,68 +169,31 @@
               </div>
             </div>
             <div class="container-box-bottom">
-              <a-form
-                layout="vertical"
-                :model="_"
-                :rules="rules"
-                :validateMessages="validateMessages"
-                ref="formRefs"
-              >
+              <a-form layout="vertical" :model="_" :rules="rules" :validateMessages="validateMessages" ref="formRefs">
                 <a-space :size="24">
                   <!-- 报价单必选校验 -->
                   <a-form-item name="priceItem" label="报价单">
-                    <a-select
-                      :disabled="handleOver"
-                      v-model:value="_.priceItem"
-                      placeholder="请选择报价单"
-                      :options="_.priceList"
-                      style="width: 170px"
-                    />
+                    <a-select :disabled="handleOver" v-model:value="_.priceItem" placeholder="请选择报价单"
+                      :options="_.priceList" style="width: 170px" />
                   </a-form-item>
 
                   <!-- 购买份数 -->
-                  <a-form-item
-                    name="num"
-                    label="购买份数"
-                    :rules="numRules(index)"
-                  >
-                    <a-input-number
-                      :disabled="handleOver"
-                      v-model:value="_.num"
-                      style="width: 120px"
-                      :precision="0"
-                      :min="1"
-                    />
+                  <a-form-item name="num" label="购买份数" :rules="numRules(index)">
+                    <a-input-number :disabled="handleOver" v-model:value="_.num" style="width: 120px" :precision="0"
+                      :min="1" />
                   </a-form-item>
 
                   <!-- 赠送课时 -->
-                  <a-form-item
-                    name="giftNum"
-                    label="赠送课时"
-                    :rules="giftNumRules(index)"
-                  >
-                    <a-input-number
-                      :disabled="handleOver"
-                      v-model:value="_.giftNum"
-                      style="width: 120px"
-                      :precision="2"
-                      :min="0"
-                    />
+                  <a-form-item name="giftNum" label="赠送课时" :rules="giftNumRules(index)">
+                    <a-input-number :disabled="handleOver" v-model:value="_.giftNum" style="width: 120px" :precision="2"
+                      :min="0" />
                   </a-form-item>
                   <!-- 有效期 -->
                   <a-form-item label="有效期至">
-                    <a-date-picker
-                      class="w-35"
-                      v-if="!handleOver"
-                      :disabled="handleOver"
-                      v-model:value="_.expiryDate"
-                    />
-                    <a-date-picker
-                      class="w-35"
-                      v-if="handleOver && _.expiryDate"
-                      :disabled="handleOver"
-                      v-model:value="_.expiryDate"
-                    />
+                    <a-date-picker class="w-35" v-if="!handleOver" :disabled="handleOver"
+                      v-model:value="_.expiryDate" />
+                    <a-date-picker class="w-35" v-if="handleOver && _.expiryDate" :disabled="handleOver"
+                      v-model:value="_.expiryDate" />
                     <div v-if="handleOver && _.expiryDate == ''" class="w-35">
                       不限制
                     </div>
@@ -402,49 +201,27 @@
                   <!-- 单课优惠 -->
                   <a-form-item name="radio" label="单课优惠">
                     <div class="flex flex-items-center" v-if="!handleOver">
-                      <a-radio-group
-                        v-model:value="_.radio"
-                        class="custom-radio"
-                      >
+                      <a-radio-group v-model:value="_.radio" class="custom-radio">
                         <a-radio value="0">无</a-radio>
                         <a-radio value="1">金额</a-radio>
                         <a-radio value="2">折扣</a-radio>
                       </a-radio-group>
 
                       <template v-if="_.radio === '1'">
-                        <a-form-item
-                          name="youhuiPrice"
-                          :rules="youhuiPriceRules(index)"
-                          class="ml-2 mgnone"
-                        >
+                        <a-form-item name="youhuiPrice" :rules="youhuiPriceRules(index)" class="ml-2 mgnone">
                           <div class="flex flex-center">
-                            <a-input-number
-                              :disabled="handleOver"
-                              v-model:value="_.youhuiPrice"
-                              style="width: 100px"
-                              :precision="2"
-                              :min="0.01"
-                            />
+                            <a-input-number :disabled="handleOver" v-model:value="_.youhuiPrice" style="width: 100px"
+                              :precision="2" :min="0.01" />
                             <span class="ml-1">元</span>
                           </div>
                         </a-form-item>
                       </template>
 
                       <template v-if="_.radio === '2'">
-                        <a-form-item
-                          name="youhuiZheKou"
-                          :rules="youhuiZheKouRules(index)"
-                          class="ml-2 mgnone"
-                        >
+                        <a-form-item name="youhuiZheKou" :rules="youhuiZheKouRules(index)" class="ml-2 mgnone">
                           <div class="flex flex-center styleCss">
-                            <a-input-number
-                              :disabled="handleOver"
-                              v-model:value="_.youhuiZheKou"
-                              style="width: 100px"
-                              :precision="2"
-                              :min="0.1"
-                              :max="10"
-                            />
+                            <a-input-number :disabled="handleOver" v-model:value="_.youhuiZheKou" style="width: 100px"
+                              :precision="2" :min="0.1" :max="10" />
                             <span class="ml-1">折</span>
                           </div>
                         </a-form-item>
@@ -455,27 +232,15 @@
                     </div>
                   </a-form-item>
                   <!-- 整单分摊优惠 -->
-                  <a-form-item
-                    v-if="handleOver"
-                    class="ml-5"
-                    label="整单分摊优惠"
-                  >
+                  <a-form-item v-if="handleOver" class="ml-5" label="整单分摊优惠">
                     <div class="text-#f00 whitespace-nowrap">
                       -¥ <span>20.12</span>
                     </div>
                   </a-form-item>
-                  <a-form-item
-                    v-if="handleOver"
-                    class="ml-5"
-                    label="分摊优惠券优惠"
-                  >
+                  <a-form-item v-if="handleOver" class="ml-5" label="分摊优惠券优惠">
                     <div>无</div>
                   </a-form-item>
-                  <a-form-item
-                    v-if="handleOver"
-                    class="ml-5"
-                    label="分摊赠送金额"
-                  >
+                  <a-form-item v-if="handleOver" class="ml-5" label="分摊赠送金额">
                     <div>无</div>
                   </a-form-item>
                 </a-space>
@@ -485,117 +250,55 @@
           <a-space :size="14" class="flex justify-end" v-if="!handleOver">
             <a-button type="primary" ghost>按班级选择</a-button>
             <a-button type="primary" ghost>选择课程/学杂费/教材商品</a-button>
-            <a-button type="primary" style="width: 128px" @click="validateAll"
-              >保存</a-button
-            >
+            <a-button type="primary" style="width: 128px" @click="validateAll">保存</a-button>
           </a-space>
           <a-space :size="14" class="flex justify-end" v-if="handleOver">
-            <a-button type="primary" ghost @click="handleEdit"
-              >编辑内容</a-button
-            >
+            <a-button type="primary" ghost @click="handleEdit">编辑内容</a-button>
           </a-space>
         </div>
       </div>
       <div class="step bg-white rounded-4 mt-3 justify-start p-6">
-        <custom-title
-          class="mb-5"
-          title="订单设置"
-          font-size="20px"
-          font-weight="500"
-        ></custom-title>
-        <a-form
-          v-if="handleOver && formState.id"
-          :model="settingForm"
-          ref="settingOrderForm"
-          labelAlign="left"
-        >
-          <a-form-item
-            class="custom-label"
-            :labelCol="{ span: 2 }"
-            label="整单优惠设置："
-          >
+        <custom-title class="mb-5" title="订单设置" font-size="20px" font-weight="500"></custom-title>
+        <a-form v-if="handleOver && formState.id" :model="settingForm" ref="settingOrderForm" labelAlign="left">
+          <a-form-item class="custom-label" :labelCol="{ span: 2 }" label="整单优惠设置：">
             <div class="flex flex-items-center">
-              <a-radio-group
-                v-model:value="settingForm.radio"
-                class="custom-radio"
-              >
+              <a-radio-group v-model:value="settingForm.radio" class="custom-radio">
                 <a-radio value="0">无</a-radio>
                 <a-radio value="1">金额</a-radio>
                 <a-radio value="2">折扣</a-radio>
               </a-radio-group>
 
               <template v-if="settingForm.radio === '1'">
-                <a-form-item
-                  name="zyouhuiPrice"
-                  :rules="zyouhuiPriceRules()"
-                  class="ml-2 mgnone"
-                >
+                <a-form-item name="zyouhuiPrice" :rules="zyouhuiPriceRules()" class="ml-2 mgnone">
                   <div class="flex flex-center">
-                    <a-input-number
-                      v-model:value="settingForm.youhuiPrice"
-                      style="width: 100px"
-                      :precision="2"
-                      :min="0.01"
-                    />
+                    <a-input-number v-model:value="settingForm.youhuiPrice" style="width: 100px" :precision="2"
+                      :min="0.01" />
                     <span class="ml-1">元</span>
                   </div>
                 </a-form-item>
               </template>
 
               <template v-if="settingForm.radio === '2'">
-                <a-form-item
-                  name="zyouhuiZheKou"
-                  :rules="zyouhuiZheKouRules()"
-                  class="ml-2 mgnone"
-                >
+                <a-form-item name="zyouhuiZheKou" :rules="zyouhuiZheKouRules()" class="ml-2 mgnone">
                   <div class="flex flex-center styleCss">
-                    <a-input-number
-                      v-model:value="settingForm.youhuiZheKou"
-                      style="width: 100px"
-                      :precision="2"
-                      :min="0.1"
-                      :max="10"
-                    />
+                    <a-input-number v-model:value="settingForm.youhuiZheKou" style="width: 100px" :precision="2"
+                      :min="0.1" :max="10" />
                     <span class="ml-1">折</span>
                   </div>
                 </a-form-item>
               </template>
             </div>
           </a-form-item>
-          <a-form-item
-            class="custom-label mt--2"
-            :labelCol="{ span: 2 }"
-            label="经办日期："
-          >
-            <a-date-picker
-              class="w-80"
-              :disabled-date="disabledDate"
-              v-model:value="settingForm.date"
-              value-format="YYYY-MM-DD"
-              @change="handleDateChange"
-              format="YYYY-MM-DD"
-            />
+          <a-form-item class="custom-label mt--2" :labelCol="{ span: 2 }" label="经办日期：">
+            <a-date-picker class="w-80" :disabled-date="disabledDate" v-model:value="settingForm.date"
+              value-format="YYYY-MM-DD" @change="handleDateChange" format="YYYY-MM-DD" />
           </a-form-item>
-          <a-form-item
-            class="custom-label"
-            :labelCol="{ span: 2 }"
-            label="优惠券："
-          >
+          <a-form-item class="custom-label" :labelCol="{ span: 2 }" label="优惠券：">
             <a-button class="w-35" ghost type="primary">输入优惠券码</a-button>
           </a-form-item>
-          <a-form-item
-            class="custom-label"
-            :labelCol="{ span: 2 }"
-            label="订单销售员："
-          >
-            <a-select
-              placeholder="请选择销售员"
-              v-model:value="settingForm.salesperson"
-              show-search
-              style="width: 320px"
-              :options="salespersonOptions"
-              :fieldNames="{ label: 'name', value: 'id' }"
-            >
+          <a-form-item class="custom-label" :labelCol="{ span: 2 }" label="订单销售员：">
+            <a-select placeholder="请选择销售员" v-model:value="settingForm.salesperson" show-search style="width: 320px"
+              :options="salespersonOptions" :fieldNames="{ label: 'name', value: 'id' }">
               <template #option="{ name, phone }">
                 <div class="flex justify-between flex-items-center">
                   <span>{{ name }}</span>
@@ -604,83 +307,38 @@
               </template>
             </a-select>
           </a-form-item>
-          <a-form-item
-            class="custom-label"
-            :labelCol="{ span: 2 }"
-            label="订单标签："
-          >
-            <a-select
-              mode="multiple"
-              placeholder="请选择订单标签"
-              v-model:value="settingForm.orderLabel"
-              show-search
-              style="width: 100%"
-              :options="orderLabelOptions"
-              :filter-option="orderLabelFilterOption"
-              :fieldNames="{ label: 'name', value: 'id' }"
-            >
+          <a-form-item class="custom-label" :labelCol="{ span: 2 }" label="订单标签：">
+            <a-select mode="multiple" placeholder="请选择订单标签" v-model:value="settingForm.orderLabel" show-search
+              style="width: 100%" :options="orderLabelOptions" :filter-option="orderLabelFilterOption"
+              :fieldNames="{ label: 'name', value: 'id' }">
             </a-select>
           </a-form-item>
-          <a-form-item
-            class="custom-label"
-            :labelCol="{ span: 2 }"
-            label="对内备注："
-          >
-            <a-input
-              placeholder="请输入对内备注，此备注仅内部员工可见"
-              v-model:value="settingForm.remarks1"
-              style="width: 100%"
-            ></a-input>
+          <a-form-item class="custom-label" :labelCol="{ span: 2 }" label="对内备注：">
+            <a-input placeholder="请输入对内备注，此备注仅内部员工可见" v-model:value="settingForm.remarks1"
+              style="width: 100%"></a-input>
           </a-form-item>
-          <a-form-item
-            class="custom-label"
-            :labelCol="{ span: 2 }"
-            label="对外备注："
-          >
-            <a-input
-              placeholder="请输入对内备注，此备注打印时将显示"
-              v-model:value="settingForm.remarks2"
-              style="width: 100%"
-            ></a-input>
+          <a-form-item class="custom-label" :labelCol="{ span: 2 }" label="对外备注：">
+            <a-input placeholder="请输入对内备注，此备注打印时将显示" v-model:value="settingForm.remarks2" style="width: 100%"></a-input>
           </a-form-item>
         </a-form>
       </div>
       <a-affix :offset-bottom="bottom">
-        <div
-          class="step h-20 flex flex-center justify-end pr-10 footer bg-white rounded-4"
-        >
-          <div class="text-5.6 totalPrice mr-12">
+        <div class="step h-20 flex flex-center justify-end pr-10 footer bg-white rounded-4 fixedcss">
+          <div class="text-5.6 totalPrice setting mr-12">
             应收金额：<span>¥ 2000.00</span>
           </div>
-          <a-button class="h-11 w-35" type="primary" @click="submitOrder"
-            >提交订单</a-button
-          >
+          <a-button class="h-11 w-35" type="primary" @click="submitOrder">提交订单</a-button>
         </div>
       </a-affix>
-      <a-modal
-        @ok="handleOk"
-        centered
-        wrapClassName="modal"
-        width="1000px"
-        :bodyStyle="{ padding: 0 }"
-        v-model:open="openSelect"
-        title="选择课程/学杂费/教材商品"
-      >
+      <a-modal @ok="handleOk" centered wrapClassName="modal" width="1000px" :bodyStyle="{ padding: 0 }"
+        v-model:open="openSelect" title="选择课程/学杂费/教材商品">
         <div class="modal-wrap">
           <div class="modal-left">
             <a-list>
-              <a-list-item
-                v-for="(item, index) in selectItems"
-                :key="index"
-                :class="{ active: activeIndex === index }"
-                @click="changeSelectItems(index)"
-              >
-                <custom-title
-                  v-if="activeIndex === index"
-                  :title="item.title"
-                  font-size="16px"
-                  :font-weight="activeIndex === index ? '500' : '300'"
-                />
+              <a-list-item v-for="(item, index) in selectItems" :key="index" :class="{ active: activeIndex === index }"
+                @click="changeSelectItems(index)">
+                <custom-title v-if="activeIndex === index" :title="item.title" font-size="16px"
+                  :font-weight="activeIndex === index ? '500' : '300'" />
                 <span class="pl-2.5" v-else>{{ item.title }}</span>
                 <span class="num">1</span>
               </a-list-item>
@@ -688,24 +346,14 @@
           </div>
           <div class="modal-right">
             <div class="m-r-t">
-              <all-filter
-                :displayArray="displayArray"
-                :isQuickShow="false"
-                search-label="课程名称"
-                searchPlaceholder="请输入课程名称"
-                :isShowSearchInput="true"
-                :isShowSearchStuPhone="false"
-              ></all-filter>
+              <all-filter :displayArray="displayArray" :isQuickShow="false" search-label="课程名称"
+                searchPlaceholder="请输入课程名称" :isShowSearchInput="true" :isShowSearchStuPhone="false"></all-filter>
             </div>
             <div class="m-r-b">
               <a-list>
-                <a-list-item
-                  @click="changeSelectCourse(index)"
-                  :class="activeCourse == index ? 'activeCourse' : ''"
-                  v-for="(item, index) in courseList"
-                  :key="index"
-                  class="flex flex-items-center justify-between r-item"
-                >
+                <a-list-item @click="changeSelectCourse(index)" :class="activeCourse == index ? 'activeCourse' : ''"
+                  v-for="(item, index) in courseList" :key="index"
+                  class="flex flex-items-center justify-between r-item">
                   <div class="m-r-b-l pt-1 pb-1">
                     <div class="text-4 text-#222 font-500 mb-1">
                       {{ item.name }}
@@ -717,9 +365,7 @@
                     </div>
                   </div>
                   <div class="m-r-b-r pt-1 pb-1">
-                    <a v-if="activeCourse == index" class="active-a"
-                      >取消选择</a
-                    >
+                    <a v-if="activeCourse == index" class="active-a">取消选择</a>
                     <a v-if="activeCourse != index">点击选择</a>
                   </div>
                 </a-list-item>
@@ -745,12 +391,8 @@
             </div>
             <div class="pay">
               <a-checkbox-group v-model:value="pay">
-                <label
-                  class="pay-box"
-                  :class="{ active: pay.includes(item.id) }"
-                  v-for="(item, index) in checkOptions"
-                  :key="index"
-                >
+                <label class="pay-box" :class="{ active: pay.includes(item.id) }" v-for="(item, index) in checkOptions"
+                  :key="index">
                   <span> <img :src="item.img" alt="" /> {{ item.label }}</span>
                   <a-checkbox :value="item.id"></a-checkbox>
                 </label>
@@ -758,98 +400,55 @@
             </div>
           </div>
           <div class="payDetail mt-5">
-            <div
-              v-for="(item, index) in accountData"
-              :key="index"
-              class="step bg-white rounded-4 justify-start"
-            >
+            <div v-for="(item, index) in accountData" :key="index" class="step bg-white rounded-4 justify-start">
               <div class="conductContent">
                 <div class="container-box mb-4">
                   <div class="container-box-top">
                     <div class="flex flex-items-center">
-                      <span
-                        class="font-600 text-#222 text-4 flex flex-items-center"
-                      >
-                        <img
-                          width="23"
-                          class="mt--0.5"
-                          :src="item.img"
-                          alt=""
-                        />
+                      <span class="font-600 text-#222 text-4 flex flex-items-center">
+                        <img width="23" class="mt--0.5" :src="item.img" alt="" />
                         <span class="ml-1">{{ item.payTitle }}</span>
                       </span>
                     </div>
                     <div class="right">
-                      <span class="price flex flex-items-center"
-                        >实收金额：
-                        <a-input
-                          style="width: 120px"
-                          v-model:value="item.solidPrice"
-                        >
+                      <span class="price flex flex-items-center">实收金额：
+                        <a-input style="width: 120px" v-model:value="item.solidPrice">
                           <template #addonAfter> 元 </template>
                         </a-input>
                       </span>
-                      <span class="cancel ml-5" @click="handleCancel(item)"
-                        >取消选择</span
-                      >
+                      <span class="cancel ml-5" @click="handleCancel(item)">取消选择</span>
                     </div>
                   </div>
                   <div class="container-box-bottom">
-                    <a-form
-                      layout="vertical"
-                      :model="item"
-                      ref="accountFormRefs"
-                    >
+                    <a-form layout="vertical" :model="item" ref="accountFormRefs">
                       <a-space :size="24">
                         <!-- 收款账户必选校验 -->
-                        <a-form-item
-                          label="收款账户"
-                          name="account"
-                          :rules="[
-                            {
-                              required: true,
-                              message: '请选择收款账户',
-                              trigger: 'change',
-                            },
-                          ]"
-                        >
-                          <a-select
-                            v-model:value="item.account"
-                            placeholder="请选择收款账户"
-                            :options="accountList"
-                            style="width: 170px"
-                          />
+                        <a-form-item label="收款账户" name="account" :rules="[
+                          {
+                            required: true,
+                            message: '请选择收款账户',
+                            trigger: 'change',
+                          },
+                        ]">
+                          <a-select v-model:value="item.account" placeholder="请选择收款账户" :options="accountList"
+                            style="width: 170px" />
                         </a-form-item>
-                        <div
-                          style="border-right: 1px solid #eee; height: 80px"
-                        ></div>
+                        <div style="border-right: 1px solid #eee; height: 80px"></div>
                         <!-- 支付日期 -->
-                        <a-form-item
-                          label="支付日期"
-                          name="payDate"
-                          :rules="[
-                            {
-                              required: true,
-                              message: '请选择支付日期',
-                              trigger: 'change',
-                            },
-                          ]"
-                        >
+                        <a-form-item label="支付日期" name="payDate" :rules="[
+                          {
+                            required: true,
+                            message: '请选择支付日期',
+                            trigger: 'change',
+                          },
+                        ]">
                           <div class="flex flex-items-center week-wrap">
-                            <a-date-picker
-                              :disabled-date="disabledDate"
-                              :default-value="dayjs()"
-                              format="YYYY-MM-DD"
-                              class="w-35"
-                              placeholder="请选择日期"
-                              v-model:value="item.payDate"
-                            />
+                            <a-date-picker :disabled-date="disabledDate" :default-value="dayjs()" format="YYYY-MM-DD"
+                              class="w-35" placeholder="请选择日期" v-model:value="item.payDate" />
                             <div class="week">周一</div>
                           </div>
                         </a-form-item>
-                        <div
-                          style="border-right: 1px solid #eee; height: 80px"
-                        ></div>
+                        <div style="border-right: 1px solid #eee; height: 80px"></div>
                         <a-form-item label="账单备注（选填）">
                           <div class="flex flex-items-center week-wrap">
                             <a-button>填写</a-button>
@@ -866,21 +465,14 @@
       </div>
       <a-affix :offset-bottom="0">
         <div class="mt-3 fixedcss">
-          <div
-            class="h-20 flex flex-center justify-end pr-10 bg-white rounded-4"
-          >
+          <div class="h-20 flex flex-center justify-end pr-10 bg-white rounded-4">
             <div class="text-5 totalPrice mr-12 flex">
               <div>实收金额：<span>¥ 2000.00</span></div>
               <div class="text-3.5 text-#666 font-400">
                 {{ paymentSummary }}
               </div>
             </div>
-            <a-button
-              class="h-11 w-35 text-5 font-600"
-              type="primary"
-              @click="validateForms"
-              >提交</a-button
-            >
+            <a-button class="h-11 w-35 text-5 font-600" type="primary" @click="validateForms">提交</a-button>
           </div>
         </div>
       </a-affix>
@@ -891,29 +483,19 @@
           <ExclamationCircleFilled class="ExclamationCircleFilled" />
           <div class="unfollowText">此学员家长尚未关注家校平台</div>
           <div class="unfollowButtonContainer">
-            点击邀请关注，推送家校通知 <RightOutlined />
+            点击邀请关注，推送家校通知
+            <RightOutlined />
           </div>
         </div>
         <div class="patStatus">
           <div class="icon">
             <svg width="72px" height="72px" viewBox="0 0 72 72">
               <title>形状结合</title>
-              <g
-                id="\u9875\u9762-1"
-                stroke="none"
-                stroke-width="1"
-                fill="none"
-                fill-rule="evenodd"
-              >
-                <g
-                  id="PC\u62A5\u540D\u7EED\u8D39"
-                  transform="translate(-694.000000, -288.000000)"
-                  fill="#FF9900"
-                >
+              <g id="\u9875\u9762-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="PC\u62A5\u540D\u7EED\u8D39" transform="translate(-694.000000, -288.000000)" fill="#FF9900">
                   <path
                     d="M730,288 C749.882251,288 766,304.117749 766,324 C766,343.882251 749.882251,360 730,360 C710.117749,360 694,343.882251 694,324 C694,304.117749 710.117749,288 730,288 Z M725.982064,302.866071 C724.206907,302.866071 722.767857,304.305132 722.767857,306.080302 L722.767857,306.080302 L722.767857,326.698561 L722.768382,326.772524 C722.803014,329.20975 724.546618,331.292687 726.947622,331.750368 L726.947622,331.750368 L742.897637,334.790775 L742.94993,334.800305 C744.674923,335.100229 746.327776,333.961588 746.656847,332.235253 L746.656847,332.235253 L746.666377,332.18296 C746.966299,330.457955 745.827666,328.805089 744.101344,328.476016 L744.101344,328.476016 L729.196271,325.634757 L729.196271,306.080302 L729.19584,306.027149 C729.167456,304.276494 727.73947,302.866071 725.982064,302.866071 Z"
-                    id="\u5F62\u72B6\u7ED3\u5408"
-                  ></path>
+                    id="\u5F62\u72B6\u7ED3\u5408"></path>
                 </g>
               </g>
             </svg>
@@ -962,11 +544,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row
-              class="bg-#f6f7f8 pt-3 ml--4 pl-4 rounded-2"
-              v-for="(item, index) in 3"
-              :key="index"
-            >
+            <a-row class="bg-#f6f7f8 pt-3 ml--4 pl-4 rounded-2" v-for="(item, index) in 3" :key="index">
               <a-col :span="6">
                 <a-form-item label="收款方式1">
                   <span>支付宝(¥100.00)</span>
@@ -1515,6 +1093,11 @@ const paymentSummary = computed(() => {
   }
 }
 
+.totalPrice.setting {
+  flex-direction: row;
+  align-items: center;
+}
+
 .current0 {
   .m-r-b-r a {
     color: var(--pro-ant-color-primary);
@@ -1677,6 +1260,7 @@ const paymentSummary = computed(() => {
     background-color: var(--pro-ant-color-primary);
     transform: scale(0.5);
   }
+
 }
 
 .current1 {
@@ -1779,25 +1363,30 @@ const paymentSummary = computed(() => {
     right: 0;
   }
 }
+
 .current2 {
   .unfollowContainer {
     background: var(--pro-ant-color-primary-bg-hover);
     padding: 15px;
     margin: 0 0 20px 0;
     border-radius: 4px;
+
     .unfollowButtonContainer {
       margin-left: 10px;
       color: var(--pro-ant-color-primary);
       cursor: pointer;
     }
+
     .ExclamationCircleFilled {
       color: var(--pro-ant-color-primary);
       margin-right: 4px;
       font-size: 16px;
     }
   }
+
   .patStatus {
     text-align: center;
+
     .payPrice {
       margin-top: 12px;
       margin-bottom: 8px;
@@ -1807,6 +1396,7 @@ const paymentSummary = computed(() => {
       font-weight: 700;
       color: #222;
     }
+
     .payTip {
       font-family: PingFangSC, PingFang SC;
       font-weight: 500;
@@ -1816,20 +1406,25 @@ const paymentSummary = computed(() => {
       font-style: normal;
     }
   }
+
   .payButton {
     text-align: center;
     margin-top: 34px;
     border-bottom: 1px solid #eee;
     padding-bottom: 40px;
   }
+
   .detailInfo {
     margin-top: 24px;
+
     span {
       color: #888;
     }
+
     :deep(.ant-form-item) {
       margin-bottom: 12px !important;
     }
+
     .rounded-2 {
       :deep(.ant-form-item) {
         margin-bottom: 2px !important;
