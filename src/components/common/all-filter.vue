@@ -1,6 +1,6 @@
 <script setup>
 import { ref, nextTick } from 'vue';
-import { DeleteOutlined, CloseOutlined,SearchOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons-vue';
 const getNameById = (id) => {
   const search = (nodes) => {
     for (const node of nodes) {
@@ -448,8 +448,8 @@ const props = defineProps({
           <div class="selectBox flex ">
             <div class="label">学员/电话</div>
             <div>
-              <a-select v-model:value="searchKey" :filter-option="filterOption" show-search placeholder="搜索姓名/手机号"
-                style="width: 240px" @change="handleChange" option-label-prop="label">
+              <a-select allowClear v-model:value="searchKey" :filter-option="filterOption" show-search
+                placeholder="搜索姓名/手机号" style="width: 240px" @change="handleChange" option-label-prop="label">
                 <a-select-option v-for="(item) in stuListOptions" :key="item.id" :value="item.id" :data="item"
                   :label="item.name">
                   <div class="flex flex-center mb-1">
@@ -474,56 +474,88 @@ const props = defineProps({
         </div>
       </div>
       <!-- 常规筛选条件 -->
-      <div class="filter-section">
-        <span class="section-title mt-0.5">筛选条件：</span>
-        <div class="standard-filters">
-          <checkbox-filter v-if="displayArray.includes('intention')" v-model:checkedValues="selectedValues"
-            :options="customOptions" label="意向度" @change="handleIntentionChange" type="checkbox" />
-          <checkbox-filter v-if="displayArray.includes('followStatus')" v-model:checkedValues="followStatusVals"
-            :options="followStatusOptions" label="跟进状态" @change="handleFollowChange" type="checkbox" />
-          <checkbox-filter v-if="displayArray.includes('sex')" v-model:checkedValues="sexVals" :options="sexOptions"
-            label="性别" @change="handleSexChange" type="checkbox" />
-          <checkbox-filter v-if="displayArray.includes('createPeo')" ref="childRef" category="teacher"
-            placeholder="请输入创建人" v-model:checkedValues="createPeoVals" :options="createPeoOptions" label="创建人"
-            @radioChange="handleCreatePeoChange" type="radio" />
-          <checkbox-filter v-if="displayArray.includes('createTime')" v-model:checkedValues="createTimeVals"
-            label="创建时间" @datePickerChange="handleCreateTimeChange" type="dateTime" />
-          <checkbox-filter v-if="displayArray.includes('intentionCourse')" ref="childRef" category="course"
-            placeholder="请输入意向课程" v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
-            @radioChange="handleCourseChange" type="radio" />
-          <checkbox-filter v-if="displayArray.includes('reference')" ref="childRef" category="stu" placeholder="请输入推荐人"
-            v-model:checkedValues="selectStuVals" :options="stuListOptions" label="推荐人"
-            @radioChange="handleReferenceChange" type="radio" />
-          <checkbox-filter v-if="type == 'dpt' && displayArray.includes('department')"
-            v-model:checkedValues="selectDptVals" :options="dptListOptions" label="所属部门" type="tree" />
-          <checkbox-filter v-if="displayArray.includes('channelCategory')" showSearch
-            v-model:checkedValues="selectChannelCategoryVals" :options="channelCategoryOptions" label="渠道分类"
-            @change="handleChannelCategoryChange" type="checkbox" />
-          <checkbox-filter v-if="displayArray.includes('channelStatus')" v-model:checkedValues="selectChannelVals"
-            :options="channelListOptions" label="渠道状态" @change="handleChannelChange" type="checkbox" />
-          <checkbox-filter v-if="displayArray.includes('channelType')" v-model:checkedValues="selectChannelTypeVals"
-            :options="channelTypeOptions" label="渠道类型" @change="handleChannelTypeChange" type="checkbox" />
-          <checkbox-filter v-if="displayArray.includes('subject')" ref="childRef" category="course" placeholder="请输入科目"
-            v-model:checkedValues="selectSubjectVals" :options="subjectOptions" label="科目"
-            @radioChange="handleSubjectChange" type="radio" />
-          <checkbox-filter v-if="displayArray.includes('courseCategory')" ref="childRef" category="course"
-            placeholder="请选择课程类别" v-model:checkedValues="selectCourseCategoryVals" :options="courseCategoryOptions"
-            label="课程类别" @radioChange="handleCourseCategoryChange" type="radio" />
+      <div class="filter-section flex justify-between">
+        <div class="flex">
+          <span class="section-title mt-0.5 text-#222">筛选条件：</span>
+          <div class="standard-filters">
+            <checkbox-filter v-if="displayArray.includes('intention')" v-model:checkedValues="selectedValues"
+              :options="customOptions" label="意向度" @change="handleIntentionChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('followStatus')" v-model:checkedValues="followStatusVals"
+              :options="followStatusOptions" label="跟进状态" @change="handleFollowChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('sex')" v-model:checkedValues="sexVals" :options="sexOptions"
+              label="性别" @change="handleSexChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('createPeo')" ref="childRef" category="teacher"
+              placeholder="请输入创建人" v-model:checkedValues="createPeoVals" :options="createPeoOptions" label="创建人"
+              @radioChange="handleCreatePeoChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('createTime')" v-model:checkedValues="createTimeVals"
+              label="创建时间" @datePickerChange="handleCreateTimeChange" type="dateTime" />
+            <checkbox-filter v-if="displayArray.includes('intentionCourse')" ref="childRef" category="course"
+              placeholder="请输入意向课程" v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
+              @radioChange="handleCourseChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('reference')" ref="childRef" category="stu"
+              placeholder="请输入推荐人" v-model:checkedValues="selectStuVals" :options="stuListOptions" label="推荐人"
+              @radioChange="handleReferenceChange" type="radio" />
+            <checkbox-filter v-if="type == 'dpt' && displayArray.includes('department')"
+              v-model:checkedValues="selectDptVals" :options="dptListOptions" label="所属部门" type="tree" />
+            <checkbox-filter v-if="displayArray.includes('channelCategory')" showSearch
+              v-model:checkedValues="selectChannelCategoryVals" :options="channelCategoryOptions" label="渠道分类"
+              @change="handleChannelCategoryChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('channelStatus')" v-model:checkedValues="selectChannelVals"
+              :options="channelListOptions" label="渠道状态" @change="handleChannelChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('channelType')" v-model:checkedValues="selectChannelTypeVals"
+              :options="channelTypeOptions" label="渠道类型" @change="handleChannelTypeChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('subject')" ref="childRef" category="course"
+              placeholder="请输入科目" v-model:checkedValues="selectSubjectVals" :options="subjectOptions" label="科目"
+              @radioChange="handleSubjectChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('courseCategory')" ref="childRef" category="course"
+              placeholder="请选择课程类别" v-model:checkedValues="selectCourseCategoryVals" :options="courseCategoryOptions"
+              label="课程类别" @radioChange="handleCourseCategoryChange" type="radio" />
+          </div>
         </div>
         <div class="w-100 mt--1" style="position: absolute;right: 12px;" v-if="isShowSearchInput">
           <div class="selectBox flex ">
             <div class="label searchLabel">{{ searchLabel }}</div>
             <div>
               <a-input class="searchInput" :placeholder="searchPlaceholder" v-model:value="searchInputKey">
-                <template #suffix><SearchOutlined style="color: #bbb;" /></template>
+                <template #suffix>
+                  <SearchOutlined style="color: #bbb;" />
+                </template>
               </a-input>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 mt--1" v-if="isShowSearchStuPhone && !isQuickShow">
+          <div class="selectBox flex ">
+            <div class="label">学员/电话</div>
+            <div>
+              <a-select allowClear v-model:value="searchKey" :filter-option="filterOption" show-search
+                placeholder="搜索姓名/手机号" style="width: 240px" @change="handleChange" option-label-prop="label">
+                <a-select-option v-for="(item) in stuListOptions" :key="item.id" :value="item.id" :data="item"
+                  :label="item.name">
+                  <div class="flex flex-center mb-1">
+                    <div>
+                      <img class="w-10 rounded-10"
+                        src="https://prod-cdn.schoolpal.cn/training/next-erp/shared/static/images/defaultimg/default_avator.png"
+                        alt="">
+                    </div>
+                    <div class="ml-2 mr-3">
+                      <div class="text-sm text-#666  leading-7">{{ item.name }}</div>
+                      <div class="text-xs text-#888">{{ item.phone }}</div>
+                    </div>
+                    <div>
+                      <a-tag :bordered="false" color="processing">在读学员</a-tag>
+                    </div>
+                  </div>
+                </a-select-option>
+
+              </a-select>
             </div>
           </div>
         </div>
       </div>
       <!-- 已选条件展示 -->
       <div class="selected-conditions" v-if="orderedConditions.length > 0 || type == 'dpt'">
-        <span class="section-title">已选条件：</span>
+        <span class="section-title text-#222">已选条件：</span>
         <div class="condition-tags">
           <a-tag v-if="type != 'dpt' || orderedConditions.length > 0" color="red" class="clear-all mb-2"
             @click="clearAll">
@@ -580,7 +612,8 @@ const props = defineProps({
   justify-content: flex-end;
   align-items: center;
 }
-.searchInput{
+
+.searchInput {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -601,7 +634,8 @@ const props = defineProps({
   padding-right: 16px;
   border-right: 0;
 }
-.selectBox .searchLabel{
+
+.selectBox .searchLabel {
   border-right: 0 !important;
 }
 

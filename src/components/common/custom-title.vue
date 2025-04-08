@@ -37,7 +37,6 @@
     content: "";
     height: 12px;
     left: 0;
-    margin-top: 1px;
     position: absolute;
     width: 4px;
   }

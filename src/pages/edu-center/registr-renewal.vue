@@ -150,9 +150,9 @@
                     _.courseName
                     }}</span>
                   <span class="ml-4">
-                    <a-tag color="#2db7f5" v-if="_.isCommon">通用课</a-tag>
-                    <a-tag color="#87d068" v-if="_.isClass">班级授课</a-tag>
-                    <a-tag color="#108ee9" v-if="_.courseType == 1">课时</a-tag>
+                    <a-tag color="#0066ff" style="color:#fff;border-radius: 10px;" v-if="_.isCommon">通用课</a-tag>
+                    <a-tag color="#e6f0ff" style="color:#0066ff;border-radius: 10px;" v-if="_.isClass">班级授课</a-tag>
+                    <a-tag color="#e6f0ff" style="color:#0066ff;border-radius: 10px;" v-if="_.courseType == 1">课时</a-tag>
                   </span>
                   <span class="ml-4">
                     <a-select v-model:value="_.handleType" placeholder="请选择" style="width: 100px">
@@ -362,14 +362,14 @@
                       {{ item.name }}
                     </div>
                     <div>
-                      <a-tag color="#2db7f5">通用课</a-tag>
-                      <a-tag color="#87d068">全部课程</a-tag>
-                      <a-tag color="#108ee9">课时</a-tag>
+                      <a-tag v-if="index==0||index==2" color="#0066ff" style="color:#fff;border-radius: 10px;">通用课</a-tag>
+                      <a-tag color="#e6f0ff" style="color:#0066ff;border-radius: 10px;">全部课程</a-tag>
+                      <a-tag color="#e6f0ff" style="color:#0066ff;border-radius: 10px;">课时</a-tag>
                     </div>
                   </div>
-                  <div class="m-r-b-r pt-1 pb-1">
+                  <div class="m-r-b-r pt-1 pb-1 select">
                     <a v-if="activeCourse == index" class="active-a">取消选择</a>
-                    <a v-if="activeCourse != index">点击选择</a>
+                    <a v-if="activeCourse != index" >点击选择</a>
                   </div>
                 </a-list-item>
               </a-list>
@@ -1035,8 +1035,7 @@ const paymentSummary = computed(() => {
     }
 
     .active.ant-list-item {
-      background: var(--pro-ant-color-primary-bg-hover);
-
+      background: #f2f8ff;
       .title {
         color: var(--pro-ant-color-primary);
       }
@@ -1061,11 +1060,16 @@ const paymentSummary = computed(() => {
   }
 
   .activeCourse {
-    background: var(--pro-ant-color-primary-bg-hover);
+    background: #f2f8ff;
   }
-
+  .select{
+    a{
+      color: var(--pro-ant-color-primary);
+    }
+  }
   .active-a {
     position: relative;
+    color: #666 !important;
 
     &::before {
       display: inline-block;
@@ -1079,6 +1083,7 @@ const paymentSummary = computed(() => {
       font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     }
   }
+ 
 }
 
 .totalPrice {

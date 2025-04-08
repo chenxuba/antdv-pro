@@ -113,9 +113,9 @@ export default [
         },
       },
       {
-        path: '/exception/404',
+        path: '/edu-center/student-list',
         name: 'Exception404',
-        component: () => import('~/pages/exception/404.vue'),
+        component: () => import('~/pages/edu-center/student-list.vue'),
         meta: {
           title: '学员管理',
         },
