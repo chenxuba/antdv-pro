@@ -1,6 +1,40 @@
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, toRaw } from 'vue';
 import { DeleteOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons-vue';
+const props = defineProps({
+  defaultStudentStatus:{
+    type: Number,
+    default: null
+  },
+  type: {
+    type: String,
+    default: 'all'
+  },
+  isQuickShow: {
+    type: Boolean,
+    default: true
+  },
+  displayArray: {
+    type: Array,
+    default: () => { return [] }
+  },
+  isShowSearchStuPhone: {
+    type: Boolean,
+    default: true
+  },
+  isShowSearchInput: {
+    type: Boolean,
+    default: false
+  },
+  searchPlaceholder: {
+    type: String,
+    default: '请输入关键字'
+  },
+  searchLabel: {
+    type: String,
+    default: '搜索纬度'
+  },
+});
 const getNameById = (id) => {
   const search = (nodes) => {
     for (const node of nodes) {
@@ -134,6 +168,13 @@ const courseCategoryOptions = ref([
 ])
 const selectCourseCategoryVals = ref(null)
 
+// 学员状态选项
+const studentStatusOptions = ref([
+  { id: 1, value: "在读学员" },
+  { id: 2, value: "历史学员" }
+])
+const selectStudentStatusVals = ref(null)
+
 // 快捷筛选选项（单选）
 const quickFilters = ref([
   { id: 1, name: "今日待跟进", count: 1, selected: false },
@@ -212,7 +253,11 @@ const handleCourseCategoryChange = (e) => {
     console.log('课程类别:', e);
   });
 }
-
+const handleStudentStatusChange = (e) => {
+  nextTick(() => {
+    console.log('学员状态:', e);
+  });
+}
 // 已选条件计算
 const selectedConditions = computed(() => {
   const conditions = [
@@ -224,26 +269,31 @@ const selectedConditions = computed(() => {
     {
       type: 'intention',
       label: '意向度',
+      show: props.displayArray.includes('intention'),
       values: customOptions.value.filter(opt => selectedValues.value.includes(opt.id))
     },
     {
       type: 'followStatus',
       label: '跟进状态',
+      show: props.displayArray.includes('followStatus'),
       values: followStatusOptions.value.filter(opt => followStatusVals.value.includes(opt.id))
     },
     {
       type: 'sex',
       label: '性别',
+      show: props.displayArray.includes('sex'),
       values: sexOptions.value.filter(opt => sexVals.value.includes(opt.id))
     },
     {
       type: 'createPeo',
       label: '创建人',
+      show: props.displayArray.includes('createPeo'),
       values: createPeoOptions.value.filter(opt => opt.id === createPeoVals.value)
     },
     {
       type: 'createTime',
       label: '创建时间',
+      show: props.displayArray.includes('createTime'),
       values: createTimeVals.value.length === 2
         ? [{
           id: 'dateRange',
@@ -254,45 +304,57 @@ const selectedConditions = computed(() => {
     {
       type: 'intentionCourse',
       label: '意向课程',
+      show: props.displayArray.includes('intentionCourse'),
       values: courseListOptions.value.filter(opt => opt.id === selectCourseValues.value)
     },
     {
       type: 'reference',
       label: '推荐人',
+      show: props.displayArray.includes('reference'),
       values: stuListOptions.value.filter(opt => opt.id === selectStuVals.value)
     },
     {
       type: 'channelCategory',
       label: '渠道分类',
+      show: props.displayArray.includes('channelCategory'),
       values: channelCategoryOptions.value.filter(opt => selectChannelCategoryVals.value.includes(opt.id))
-
     },
     {
       type: 'channelStatus',
       label: '渠道状态',
+      show: props.displayArray.includes('channelStatus'),
       values: channelListOptions.value.filter(opt => selectChannelVals.value.includes(opt.id))
 
     },
     {
       type: 'channelType',
       label: '渠道类型',
+      show: props.displayArray.includes('channelType'),
       values: channelTypeOptions.value.filter(opt => selectChannelTypeVals.value.includes(opt.id))
 
     },
     {
       type: 'subject',
       label: '科目',
+      show: props.displayArray.includes('subject'),
       values: subjectOptions.value.filter(opt => opt.id === selectSubjectVals.value)
     },
     {
       type: 'courseCategory',
       label: '课程类别',
+      show: props.displayArray.includes('courseCategory'),
       values: courseCategoryOptions.value.filter(opt => opt.id === selectCourseCategoryVals.value)
+    },
+    {
+      type: 'studentStatus',
+      label: '学员状态',
+      show: props.displayArray.includes('studentStatus'),
+      values: studentStatusOptions.value.filter(opt => opt.id === selectStudentStatusVals.value)
     },
 
   ];
   return conditions
-    .filter(item => item.values.length > 0)
+    .filter(item => item.values.length > 0 && item.show)
     .sort((a, b) => (lastUpdated[a.type] || 0) - (lastUpdated[b.type] || 0));
 });
 watch(selectDptVals, () => { dptName.value = getNameById(selectDptVals.value) })
@@ -310,6 +372,7 @@ watch(() => quickFilters.value.map(q => q.selected), () => lastUpdated.quick = D
 watch(selectStuVals, () => lastUpdated.reference = Date.now());
 watch(selectSubjectVals, () => lastUpdated.subject = Date.now());
 watch(selectCourseCategoryVals, () => lastUpdated.courseCategory = Date.now());
+watch(selectStudentStatusVals, () => lastUpdated.studentStatus = Date.now());
 // 观察筛选条件变化，维护顺序队列
 watch(selectedConditions, (newConditions) => {
   const newTypes = newConditions.map(c => c.type);
@@ -344,6 +407,7 @@ const clearAll = () => {
   selectStuVals.value = null;
   selectSubjectVals.value = null
   selectCourseCategoryVals.value = null
+  selectStudentStatusVals.value = null
   Object.values(childRefs.value).forEach(child => {
     if (child?.resetSearch) {
       child.resetSearch();
@@ -393,6 +457,9 @@ const removeCondition = (type, id) => {
     case 'courseCategory':  // 课程类别移除逻辑
       selectCourseCategoryVals.value = null;
       break;
+    case 'studentStatus':
+      selectStudentStatusVals.value = null;
+      break;
   }
 };
 const handleChange = (value) => {
@@ -408,36 +475,13 @@ const filterOption = (input, option) => {
     phone.includes(input)
   );
 };
-const props = defineProps({
-  type: {
-    type: String,
-    default: 'all'
-  },
-  isQuickShow: {
-    type: Boolean,
-    default: true
-  },
-  displayArray: {
-    type: Array,
-    default: () => { return [] }
-  },
-  isShowSearchStuPhone: {
-    type: Boolean,
-    default: true
-  },
-  isShowSearchInput: {
-    type: Boolean,
-    default: false
-  },
-  searchPlaceholder: {
-    type: String,
-    default: '请输入关键字'
-  },
-  searchLabel: {
-    type: String,
-    default: '搜索纬度'
-  },
+// 子组件内部需要初始化（在 onMounted 中）
+onMounted(() => {
+  if (props.defaultStudentStatus) {
+    selectStudentStatusVals.value = props.defaultStudentStatus;
+  }
 });
+
 </script>
 
 <template>
@@ -494,17 +538,18 @@ const props = defineProps({
               :options="followStatusOptions" label="跟进状态" @change="handleFollowChange" type="checkbox" />
             <checkbox-filter v-if="displayArray.includes('sex')" v-model:checkedValues="sexVals" :options="sexOptions"
               label="性别" @change="handleSexChange" type="checkbox" />
-            <checkbox-filter v-if="displayArray.includes('createPeo')" :ref="(el) => handleRef(el, 'createUser')" category="teacher"
-              placeholder="请输入创建人" v-model:checkedValues="createPeoVals" :options="createPeoOptions" label="创建人"
-              @radioChange="handleCreatePeoChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('createPeo')" :ref="(el) => handleRef(el, 'createUser')"
+              category="teacher" placeholder="请输入创建人" v-model:checkedValues="createPeoVals" :options="createPeoOptions"
+              label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
             <checkbox-filter v-if="displayArray.includes('createTime')" v-model:checkedValues="createTimeVals"
               label="创建时间" @datePickerChange="handleCreateTimeChange" type="dateTime" />
-            <checkbox-filter v-if="displayArray.includes('intentionCourse')" :ref="(el) => handleRef(el, 'yiXiangcourse')" category="course"
-              placeholder="请输入意向课程" v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
+            <checkbox-filter v-if="displayArray.includes('intentionCourse')"
+              :ref="(el) => handleRef(el, 'yiXiangcourse')" category="course" placeholder="请输入意向课程"
+              v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
               @radioChange="handleCourseChange" type="radio" />
-            <checkbox-filter v-if="displayArray.includes('reference')" :ref="(el) => handleRef(el, 'tuijianren')" category="stu"
-              placeholder="请输入推荐人" v-model:checkedValues="selectStuVals" :options="stuListOptions" label="推荐人"
-              @radioChange="handleReferenceChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('reference')" :ref="(el) => handleRef(el, 'tuijianren')"
+              category="stu" placeholder="请输入推荐人" v-model:checkedValues="selectStuVals" :options="stuListOptions"
+              label="推荐人" @radioChange="handleReferenceChange" type="radio" />
             <checkbox-filter v-if="type == 'dpt' && displayArray.includes('department')"
               v-model:checkedValues="selectDptVals" :options="dptListOptions" label="所属部门" type="tree" />
             <checkbox-filter v-if="displayArray.includes('channelCategory')" showSearch
@@ -514,12 +559,15 @@ const props = defineProps({
               :options="channelListOptions" label="渠道状态" @change="handleChannelChange" type="checkbox" />
             <checkbox-filter v-if="displayArray.includes('channelType')" v-model:checkedValues="selectChannelTypeVals"
               :options="channelTypeOptions" label="渠道类型" @change="handleChannelTypeChange" type="checkbox" />
-            <checkbox-filter v-if="displayArray.includes('subject')" :ref="(el) => handleRef(el, 'kemu')" category="course"
-              placeholder="请输入科目" v-model:checkedValues="selectSubjectVals" :options="subjectOptions" label="科目"
-              @radioChange="handleSubjectChange" type="radio" />
-            <checkbox-filter v-if="displayArray.includes('courseCategory')" :ref="(el) => handleRef(el, 'courseType')" category="course"
-              placeholder="请选择课程类别" v-model:checkedValues="selectCourseCategoryVals" :options="courseCategoryOptions"
-              label="课程类别" @radioChange="handleCourseCategoryChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('subject')" :ref="(el) => handleRef(el, 'kemu')"
+              category="course" placeholder="请输入科目" v-model:checkedValues="selectSubjectVals" :options="subjectOptions"
+              label="科目" @radioChange="handleSubjectChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('courseCategory')" :ref="(el) => handleRef(el, 'courseType')"
+              category="course" placeholder="请选择课程类别" v-model:checkedValues="selectCourseCategoryVals"
+              :options="courseCategoryOptions" label="课程类别" @radioChange="handleCourseCategoryChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('studentStatus')" :ref="(el) => handleRef(el, 'studentStatus')"
+              category="noSearchRadio" placeholder="选择学员状态" v-model:checkedValues="selectStudentStatusVals"
+              :options="studentStatusOptions" label="学员状态" @radioChange="handleStudentStatusChange" type="radio" />
           </div>
         </div>
         <div class="w-100 mt--1" style="position: absolute;right: 12px;" v-if="isShowSearchInput">

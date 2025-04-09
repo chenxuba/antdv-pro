@@ -2,7 +2,7 @@
   <div>
     <!-- 学员筛选条件 -->
     <div class="filter-wrap mt-2 bg-white  pl-3 pr-3 rounded-4">
-      <all-filter :displayArray="displayArray" :is-quick-show="false" :isShowSearchStuPhone="true"></all-filter>
+      <all-filter :defaultStudentStatus="defaultStudentStatus" :displayArray="displayArray" :is-quick-show="false" :isShowSearchStuPhone="true"></all-filter>
     </div>
     <div class="student-list mt-2 pt-3 pb-3 pl-6 pr-6 bg-white rounded-4">
       <div class="tab-table">
@@ -195,7 +195,7 @@
 
 <script setup>
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
-const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference'])
+const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference','studentStatus'])
 const dataSource = ref([{},{}])
 const allColumns = ref([
   {
@@ -319,6 +319,7 @@ const rowSelection = {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
 };
+const defaultStudentStatus = ref(1)
 // 从本地存储读取已保存的列配置
 const savedSelected = localStorage.getItem('studyingOrHistoryColumns');
 const keysArray = allColumns.value
@@ -415,7 +416,7 @@ const totalWidth = computed(() =>
 }
 
 .tip{
-  padding: 10px;
+  padding: 10px 24px 10px 14px;
   background: #e6f0ff;
   color: #333;
   a{

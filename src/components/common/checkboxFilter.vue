@@ -43,6 +43,12 @@
             <div class="text-xs text-#888">{{ item.phone ?? '' }}</div>
           </a-menu-item>
         </div>
+        <div class="max-h-80 overflow-auto scrollbar" v-if="category == 'noSearchRadio'">
+          <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
+            :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
+            <div class="text-sm text-#666  leading-7">{{ item.value ?? item.name }}</div>
+          </a-menu-item>
+        </div>
         <div class="max-h-70 overflow-auto scrollbar" v-if="category == 'stu'">
           <a-menu-item :class="checkedValues == item.id ? 'menu-item active' : 'menu-item'" v-for="item in options"
             :key="item.id" :value="item.id" @click="handleRadioChange(item.id)">
@@ -276,12 +282,15 @@ const handleRangePicker = (dates) => {
 
 :deep(.ant-dropdown-menu-item.menu-item) {
   &:hover {
-    background-color: var(--pro-ant-color-primary-bg-hover) !important;
+    background-color: rgba(230, 240, 255, .5) !important;
   }
 }
 
 :deep(.active) {
-  background-color: var(--pro-ant-color-primary-bg-hover) !important;
+  background-color: rgba(230, 240, 255, .5) !important;
+  div{
+    color: var(--pro-ant-color-primary) !important;
+  }
 }
 
 :deep(.top-item) {

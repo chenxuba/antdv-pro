@@ -48,6 +48,13 @@
           </div>
         </div>
         <div class="table-content mt-2">
+          <div class="tip flex justify-between"> 
+            <div>
+              <ExclamationCircleFilled :style="{ fontSize: '14px',color:'#0066ff' }" />
+             家缺课学员条件设置：距离最近一次上课为到课状态的上课日期大于 30 天
+            </div>
+            <div class="cursor-pointer">缺课条件配置</div>
+             </div>
           <a-table :dataSource="dataSource" :pagination="dataSource.length>10" :columns="filteredColumns" :row-selection="rowSelection"
             :scroll="{ x: totalWidth }">
             <template #headerCell="{ column }">
@@ -140,7 +147,7 @@
 </template>
 
 <script setup>
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { DownOutlined, ExclamationCircleOutlined,ExclamationCircleFilled } from '@ant-design/icons-vue';
 const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference'])
 const dataSource = ref([
   {
@@ -316,5 +323,11 @@ const totalWidth = computed(() =>
     position: absolute;
     width: 4px;
   }
+}
+.tip{
+  padding: 10px 24px 10px 14px;
+  background: #e6f0ff;
+  color: #333;
+  color: var(--pro-ant-color-primary);
 }
 </style>

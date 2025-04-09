@@ -7,7 +7,7 @@
     <div class="student-list mt-2 pt-3 pb-3 pl-6 pr-6 bg-white rounded-4">
       <div class="tab-table">
         <div class="table-title flex justify-between">
-          <div class="total">当前共{{ dataSource.length }}名学员</div>
+          <div class="total">当前共{{ dataSource.length }}名学员 <span class="text-#0066ff" v-text="tips"></span> </div>
           <div class="edit flex">
             <a-button class="mr-2">消息记录</a-button>
             <a-dropdown class="mr-2">
@@ -90,6 +90,7 @@
 
 <script setup>
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+const tips = ref('（当前为“剩余课时<15”/“剩余天数<15”/“剩余金额<500元”的学员）')
 const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference'])
 const dataSource = ref([
   {
