@@ -88,6 +88,28 @@
         v-model:value="selectDates" />
     </a-button>
   </a-dropdown>
+  <a-dropdown v-if="type == 'dateTimeQuick'" :trigger="['click']" v-model:open="visible" placement="bottomLeft"
+    :arrow="true">
+    <a-button style="position: relative;" class="h-28px flex filter-btn mr-2 mb-2">
+      {{ label }}
+      <div v-if="checkedValues.length > 0" class="num">1</div>
+      <DownOutlined v-else :style="{ fontSize: '10px' }" />
+      <a-range-picker :key="pickerKey" @calendarChange="calendarChangeFun" value-format="YYYY-MM-DD"
+        :disabled-date="disabledDateBefore" @change="handleRangePicker" popupClassName="picker-wrapper dateTimeQuick"
+        :open="visible" v-model:value="selectDates" :presets="rangePresets">
+        <template #renderExtraFooter>
+          <div class="pl-3.5">
+            <a-tag color="pink">本周</a-tag>
+            <a-tag color="red">上周</a-tag>
+            <a-tag color="orange">本月</a-tag>
+            <a-tag color="green">上月</a-tag>
+            <a-tag color="cyan">截至昨日</a-tag>
+            <a-tag color="#e6f4ff" @click="resetPicker" class="cursor-pointer ml-8 reset-btn">重置</a-tag>
+          </div>
+        </template>
+      </a-range-picker>
+    </a-button>
+  </a-dropdown>
   <a-dropdown v-if="type == 'tree'" :trigger="['click']" v-model:open="visible" placement="bottomLeft" :arrow="true">
     <template #overlay>
       <a-menu>
@@ -119,7 +141,7 @@ import { Empty } from 'ant-design-vue';
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 // 指定禁用之前的日期（例如：2023-01-01）
 let specifiedDate = null;
-
+//禁用条件：日期在 specifiedDate 之前 或 今天之后
 const disabledDate = (current) => {
   const today = new Date();
 
@@ -129,6 +151,47 @@ const disabledDate = (current) => {
   // 禁用条件：日期在 specifiedDate 之前 或 今天之后
   return currentDate < specifiedDate || currentDate > today;
 };
+//禁用条件：日期在 specifiedDate 之前 
+const disabledDateBefore = (current) => {
+  const today = new Date();
+
+  // 克隆当前日期并清除时间部分
+  const currentDate = new Date(current);
+
+  // 禁用条件：日期在 specifiedDate 之前 或 今天之后
+  return currentDate < specifiedDate;
+};
+const rangePresets = ref([
+  {
+    label: '本周',
+    // 周一到周日（含未来日期）
+    value: [dayjs().startOf('week'), dayjs().endOf('week')]
+  },
+  {
+    label: '本月',
+    // 本月1号到本月最后一天（含未来日期）
+    value: [dayjs().startOf('month'), dayjs().endOf('month')]
+  },
+  {
+    label: '上周',
+    value: [
+      dayjs().subtract(1, 'week').startOf('week'),
+      dayjs().subtract(1, 'week').endOf('week')
+    ]
+  },
+  {
+    label: '上月',
+    value: [
+      dayjs().subtract(1, 'month').startOf('month'),
+      dayjs().subtract(1, 'month').endOf('month')
+    ]
+  },
+  {
+    label: '截止今日',
+    // 固定起始日期到当前日期（不含未来）
+    value: [dayjs('2020-01-01'), dayjs()]
+  }
+]);
 const calendarChangeFun = (e) => {
   specifiedDate = new Date(e[0])
 }
@@ -237,8 +300,6 @@ const handleRadioChange = (id) => {
 };
 const handleRangePicker = (dates) => {
   checkedValues.value = dates
-  visible.value = false
-  pickerKey.value++;     // 强制重新渲染
   selectDates.value = []
   // 转为普通数组
   const rawDates = toRaw(dates);
@@ -246,6 +307,14 @@ const handleRangePicker = (dates) => {
   // const rawDates = [...dates];
   emit('datePickerChange', rawDates);
   specifiedDate = ''
+  visible.value = false
+  setTimeout(() => {
+    pickerKey.value++;     // 强制重新渲染
+  }, 400);
+}
+const resetPicker = () => {
+  specifiedDate = null
+  pickerKey.value++;     // 强制重新渲染
 }
 </script>
 
@@ -288,7 +357,8 @@ const handleRangePicker = (dates) => {
 
 :deep(.active) {
   background-color: rgba(230, 240, 255, .5) !important;
-  div{
+
+  div {
     color: var(--pro-ant-color-primary) !important;
   }
 }
@@ -307,6 +377,16 @@ const handleRangePicker = (dates) => {
 :deep(.ant-select-tree-node-selected) {
   width: 140px !important;
 }
+
+.reset-btn {
+  position: relative;
+  top: -2px;
+  left: -4px;
+  height: 22.85px;
+  border-color: #7abdff;
+  color: #06f;
+  border-radius: 4px;
+}
 </style>
 <style lang="less">
 .picker-wrapper {
@@ -320,5 +400,47 @@ const handleRangePicker = (dates) => {
 
 .ant-dropdown-show-arrow {
   z-index: 9999 !important;
+}
+
+.dateTimeQuick {
+  .ant-picker-panel-layout {}
+
+  .ant-picker-presets {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 30px;
+    max-width: 55% !important;
+    background: #fff;
+
+    ul {
+      overflow: hidden !important;
+      display: flex;
+      align-items: center;
+      padding: 0 !important;
+      margin-top: -10px !important;
+      padding: 0 0 0 12px !important;
+      border: none !important;
+
+      li {
+        margin: 0 !important;
+        margin-right: 12px !important;
+        background: #e6f4ff;
+        color: #06f;
+        cursor: pointer;
+        font-size: 12px;
+        border: 1px solid #f0f0f0 !important;
+        border-color: #7abdff !important;
+        border-radius: 4px !important;
+        padding: 1px 8px !important;
+
+        &:hover {
+          background: #e6f4ff !important;
+        }
+      }
+    }
+  }
 }
 </style>

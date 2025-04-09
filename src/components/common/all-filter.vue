@@ -2,7 +2,7 @@
 import { ref, nextTick, toRaw } from 'vue';
 import { DeleteOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons-vue';
 const props = defineProps({
-  defaultStudentStatus:{
+  defaultStudentStatus: {
     type: Number,
     default: null
   },
@@ -102,6 +102,11 @@ const createPeoVals = ref(null);
 // 创建时间选项
 const createTimeVals = ref([])
 
+// 结课日期选项
+const classEndingTimeVals = ref([])
+// 停课日期选项
+const classStopTimeVals = ref([])
+
 // 课程列表选项
 const courseListOptions = ref([
   { id: 1, value: "初级感统课" },
@@ -174,6 +179,36 @@ const studentStatusOptions = ref([
   { id: 2, value: "历史学员" }
 ])
 const selectStudentStatusVals = ref(null)
+
+// 当前状态选项
+const currentStatusOptions = ref([
+  { id: 1, value: "已停课" },
+  { id: 2, value: "已结课" },
+  { id: 3, value: "正常" },
+])
+const selectCurrentStatusVals = ref([])
+
+// 是否分班
+const orNotFenClassOptions = ref([
+  { id: 0, value: "未分班" },
+  { id: 1, value: "已分班" },
+])
+const selectOrNotFenClassVals = ref([])
+
+// 计费模式选项
+const billingModeOptions = ref([
+  { id: 0, value: "按金额" },
+  { id: 1, value: "按课时" },
+  { id: 2, value: "按时段" },
+])
+const selectBillingModeVals = ref([])
+
+// 是否设置有效期
+const isSetExpirationDateOptions = ref([
+  { id: 1, value: "已设置有效期" },
+  { id: 2, value: "未设置有效期" },
+])
+const selectIsSetExpirationDateVals = ref(null)
 
 // 快捷筛选选项（单选）
 const quickFilters = ref([
@@ -258,6 +293,26 @@ const handleStudentStatusChange = (e) => {
     console.log('学员状态:', e);
   });
 }
+const handleCurrentStatusChange = (e) => {
+  nextTick(() => {
+    console.log('当前状态:', e);
+  });
+}
+const handleOrNotFenClassChange = (e) => {
+  nextTick(() => {
+    console.log('是否分班:', e);
+  });
+}
+const handleBillingModeChange = (e) => {
+  nextTick(() => {
+    console.log('计费模式:', e);
+  });
+}
+const handleIsSetExpirationDateChange = (e) => {
+  nextTick(() => {
+    console.log('有效期状态:', e);
+  });
+}
 // 已选条件计算
 const selectedConditions = computed(() => {
   const conditions = [
@@ -298,6 +353,28 @@ const selectedConditions = computed(() => {
         ? [{
           id: 'dateRange',
           value: `${createTimeVals.value[0]} 至 ${createTimeVals.value[1]}`
+        }]
+        : []
+    },
+    {
+      type: 'classEndingTime',
+      label: '结课时间',
+      show: props.displayArray.includes('classEndingTime'),
+      values: classEndingTimeVals.value.length === 2
+        ? [{
+          id: 'dateRange',
+          value: `${classEndingTimeVals.value[0]} 至 ${classEndingTimeVals.value[1]}`
+        }]
+        : []
+    },
+    {
+      type: 'classStopTime',
+      label: '停课时间',
+      show: props.displayArray.includes('classStopTime'),
+      values: classStopTimeVals.value.length === 2
+        ? [{
+          id: 'dateRange',
+          value: `${classStopTimeVals.value[0]} 至 ${classStopTimeVals.value[1]}`
         }]
         : []
     },
@@ -351,6 +428,30 @@ const selectedConditions = computed(() => {
       show: props.displayArray.includes('studentStatus'),
       values: studentStatusOptions.value.filter(opt => opt.id === selectStudentStatusVals.value)
     },
+    {
+      type: 'currentStatus',
+      label: '当前状态',
+      show: props.displayArray.includes('currentStatus'),
+      values: currentStatusOptions.value.filter(opt => selectCurrentStatusVals.value.includes(opt.id))
+    },
+    {
+      type: 'orNotFenClass',
+      label: '是否分班',
+      show: props.displayArray.includes('orNotFenClass'),
+      values: orNotFenClassOptions.value.filter(opt => selectOrNotFenClassVals.value.includes(opt.id))
+    },
+    {
+      type: 'billingMode',
+      label: '计费模式',
+      show: props.displayArray.includes('billingMode'),
+      values: billingModeOptions.value.filter(opt => selectBillingModeVals.value.includes(opt.id))
+    },
+    {
+      type: 'isSetExpirationDate',
+      label: '是否设置有效期',
+      show: props.displayArray.includes('isSetExpirationDate'),
+      values: isSetExpirationDateOptions.value.filter(opt => opt.id === selectIsSetExpirationDateVals.value)
+    },
 
   ];
   return conditions
@@ -367,12 +468,18 @@ watch(selectChannelTypeVals, () => lastUpdated.channelType = Date.now());
 watch(selectChannelCategoryVals, () => lastUpdated.channelCategory = Date.now());
 watch(createPeoVals, () => lastUpdated.createPeo = Date.now());
 watch(createTimeVals, () => lastUpdated.createTime = Date.now());
+watch(classEndingTimeVals, () => lastUpdated.classEndingTime = Date.now());
+watch(classStopTimeVals, () => lastUpdated.classStopTime = Date.now());
 watch(selectCourseValues, () => lastUpdated.intentionCourse = Date.now());
 watch(() => quickFilters.value.map(q => q.selected), () => lastUpdated.quick = Date.now(), { deep: true });
 watch(selectStuVals, () => lastUpdated.reference = Date.now());
 watch(selectSubjectVals, () => lastUpdated.subject = Date.now());
 watch(selectCourseCategoryVals, () => lastUpdated.courseCategory = Date.now());
 watch(selectStudentStatusVals, () => lastUpdated.studentStatus = Date.now());
+watch(selectCurrentStatusVals, () => lastUpdated.currentStatus = Date.now());
+watch(selectOrNotFenClassVals, () => lastUpdated.orNotFenClass = Date.now());
+watch(selectBillingModeVals, () => lastUpdated.billingMode = Date.now());
+watch(selectIsSetExpirationDateVals, () => lastUpdated.isSetExpirationDate = Date.now());
 // 观察筛选条件变化，维护顺序队列
 watch(selectedConditions, (newConditions) => {
   const newTypes = newConditions.map(c => c.type);
@@ -396,8 +503,9 @@ const orderedConditions = computed(() => {
 // 清空所有筛选
 const clearAll = () => {
   // 重置多选类
-  [selectedValues, followStatusVals, sexVals, createTimeVals,
-    selectChannelVals, selectChannelCategoryVals, selectChannelTypeVals].forEach(
+  [selectedValues, followStatusVals, sexVals, createTimeVals, classEndingTimeVals, classStopTimeVals,
+    selectChannelVals, selectChannelCategoryVals, selectChannelTypeVals, selectCurrentStatusVals,
+    selectOrNotFenClassVals, selectBillingModeVals].forEach(
       ref => ref.value = []
     );
   // 重置单选类
@@ -408,6 +516,7 @@ const clearAll = () => {
   selectSubjectVals.value = null
   selectCourseCategoryVals.value = null
   selectStudentStatusVals.value = null
+  selectIsSetExpirationDateVals.value = null
   Object.values(childRefs.value).forEach(child => {
     if (child?.resetSearch) {
       child.resetSearch();
@@ -445,6 +554,12 @@ const removeCondition = (type, id) => {
     case 'createTime':  // 新增创建时间移除逻辑
       createTimeVals.value = [];
       break;
+    case 'classEndingTime':  // 新增创建时间移除逻辑
+      classEndingTimeVals.value = [];
+      break;
+    case 'classStopTime':  // 新增创建时间移除逻辑
+      classStopTimeVals.value = [];
+      break;
     case 'intentionCourse':  // 新增意向课程移除逻辑
       selectCourseValues.value = null;
       break;
@@ -459,6 +574,18 @@ const removeCondition = (type, id) => {
       break;
     case 'studentStatus':
       selectStudentStatusVals.value = null;
+      break;
+    case 'currentStatus':
+      selectCurrentStatusVals.value = [];
+      break;
+    case 'orNotFenClass':
+      selectOrNotFenClassVals.value = [];
+      break;
+    case 'billingMode':
+      selectBillingModeVals.value = [];
+      break;
+    case 'isSetExpirationDate':
+      selectIsSetExpirationDateVals.value = null;
       break;
   }
 };
@@ -543,6 +670,10 @@ onMounted(() => {
               label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
             <checkbox-filter v-if="displayArray.includes('createTime')" v-model:checkedValues="createTimeVals"
               label="创建时间" @datePickerChange="handleCreateTimeChange" type="dateTime" />
+            <checkbox-filter v-if="displayArray.includes('classEndingTime')" v-model:checkedValues="classEndingTimeVals"
+              label="结课时间" @datePickerChange="handleCreateTimeChange" type="dateTimeQuick" />
+            <checkbox-filter v-if="displayArray.includes('classStopTime')" v-model:checkedValues="classStopTimeVals"
+              label="停课时间" @datePickerChange="handleCreateTimeChange" type="dateTimeQuick" />
             <checkbox-filter v-if="displayArray.includes('intentionCourse')"
               :ref="(el) => handleRef(el, 'yiXiangcourse')" category="course" placeholder="请输入意向课程"
               v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
@@ -568,6 +699,19 @@ onMounted(() => {
             <checkbox-filter v-if="displayArray.includes('studentStatus')" :ref="(el) => handleRef(el, 'studentStatus')"
               category="noSearchRadio" placeholder="选择学员状态" v-model:checkedValues="selectStudentStatusVals"
               :options="studentStatusOptions" label="学员状态" @radioChange="handleStudentStatusChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('currentStatus')" :ref="(el) => handleRef(el, 'currentStatus')"
+              category="course" placeholder="选择状态" v-model:checkedValues="selectCurrentStatusVals"
+              :options="currentStatusOptions" label="当前状态" @change="handleCurrentStatusChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('orNotFenClass')" :ref="(el) => handleRef(el, 'orNotFenClass')"
+              v-model:checkedValues="selectOrNotFenClassVals" :options="orNotFenClassOptions" label="是否分班"
+              @change="handleOrNotFenClassChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('billingMode')" :ref="(el) => handleRef(el, 'billingMode')"
+              v-model:checkedValues="selectBillingModeVals" :options="billingModeOptions" label="计费模式"
+              @change="handleBillingModeChange" type="checkbox" />
+            <checkbox-filter v-if="displayArray.includes('isSetExpirationDate')"
+              :ref="(el) => handleRef(el, 'isSetExpirationDate')" category="noSearchRadio" placeholder="请选择有效期状态"
+              v-model:checkedValues="selectIsSetExpirationDateVals" :options="isSetExpirationDateOptions"
+              label="是否设置有效期" @radioChange="handleIsSetExpirationDateChange" type="radio" />
           </div>
         </div>
         <div class="w-100 mt--1" style="position: absolute;right: 12px;" v-if="isShowSearchInput">

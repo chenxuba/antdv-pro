@@ -197,7 +197,7 @@
 
 <script setup>
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
-const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference','studentStatus'])
+const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference','studentStatus','classEndingTime'])
 const dataSource = ref([{},{}])
 const allColumns = ref([
   {

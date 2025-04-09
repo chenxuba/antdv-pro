@@ -121,9 +121,9 @@ export default [
         },
       },
       {
-        path: '/exception/500',
-        name: 'Exception500',
-        component: () => import('~/pages/exception/500.vue'),
+        path: '/edu-center/register-read-list',
+        name: 'RegisterReadList',
+        component: () => import('~/pages/edu-center/register-read-list.vue'),
         meta: {
           title: '报读列表',
         },
