@@ -14,10 +14,10 @@ const activeKey = ref('1');
           <student-manage></student-manage>
         </a-tab-pane>
         <a-tab-pane key="2" tab="学员属性设置">
-          学员属性设置
+          <student-code></student-code>
         </a-tab-pane>
         <a-tab-pane key="3" tab="学员关联人员设置">
-          学员关联人员设置
+          <student-link-setting></student-link-setting>
         </a-tab-pane>
       </a-tabs>
     </div>
