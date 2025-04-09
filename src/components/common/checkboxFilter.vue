@@ -148,12 +148,12 @@ defineExpose({
 })
 // 实际搜索逻辑
 const doSearch = () => {
-  console.log('执行搜索:', searchPeo.value);
+  console.log('执行搜索1:', searchPeo.value);
   // 这里替换为真实的搜索逻辑
 };
 // 实际搜索逻辑
 const doSearchCategory = () => {
-  console.log('执行搜索:', searchChannelCategory.value);
+  console.log('执行搜索2:', searchChannelCategory.value);
   // 这里替换为真实的搜索逻辑
 };
 // 创建防抖函数（500ms延迟）

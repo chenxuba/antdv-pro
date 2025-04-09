@@ -3,7 +3,9 @@ import { ref, computed, nextTick } from 'vue';
 import { DeleteOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import checkboxFilter from "@/components/common/checkboxFilter.vue";
 const searchKey = ref(undefined)
-const childRef = ref(null)
+const childRef0 = ref(null)
+const childRef1 = ref(null)
+const childRef2 = ref(null)
 const lastUpdated = reactive({});
 const conditionOrder = ref([]); // 存储条件类型的添加顺序
 // 意向度选项
@@ -212,8 +214,14 @@ const clearAll = () => {
   createPeoVals.value = null;
   selectCourseValues.value = null;
   selectStuVals.value = null;
-  if (childRef.value) {
-    childRef.value.resetSearch()
+  if (childRef0.value) {
+    childRef0.value.resetSearch()
+  }
+  if (childRef1.value) {
+    childRef1.value.resetSearch()
+  }
+  if (childRef2.value) {
+    childRef2.value.resetSearch()
   }
 };
 
@@ -287,14 +295,14 @@ const filterOption = (input, option) => {
             @change="handleFollowChange" type="checkbox" />
           <checkbox-filter v-model:checkedValues="sexVals" :options="sexOptions" label="性别" @change="handleSexChange"
             type="checkbox" />
-          <checkbox-filter ref="childRef" category="teacher" placeholder="请输入创建人" v-model:checkedValues="createPeoVals"
+          <checkbox-filter ref="childRef0" category="teacher" placeholder="请输入创建人" v-model:checkedValues="createPeoVals"
             :options="createPeoOptions" label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
           <checkbox-filter v-model:checkedValues="createTimeVals" label="创建时间"
             @datePickerChange="handleCreateTimeChange" type="dateTime" />
-          <checkbox-filter ref="childRef" category="course" placeholder="请输入意向课程"
+          <checkbox-filter ref="childRef1" category="course" placeholder="请输入意向课程"
             v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
             @radioChange="handleCourseChange" type="radio" />
-          <checkbox-filter ref="childRef" category="stu" placeholder="请输入推荐人" v-model:checkedValues="selectStuVals"
+          <checkbox-filter ref="childRef2" category="stu" placeholder="请输入推荐人" v-model:checkedValues="selectStuVals"
             :options="stuListOptions" label="推荐人" @radioChange="handleReferenceChange" type="radio" />
            
             

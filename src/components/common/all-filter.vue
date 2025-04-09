@@ -20,7 +20,15 @@ onMounted(() => {
 const dptName = ref('')
 const searchKey = ref(undefined)
 const searchInputKey = ref(undefined)
-const childRef = ref(null)
+const childRefs = ref({});// 存储子组件实例（按 category 分类）
+// 动态收集/清理子组件实例
+const handleRef = (el, category) => {
+  if (el) {
+    childRefs.value[category] = el; // 组件挂载时存储实例
+  } else {
+    delete childRefs.value[category]; // 组件卸载时删除实例
+  }
+};
 const lastUpdated = reactive({});
 const conditionOrder = ref([]); // 存储条件类型的添加顺序
 // 意向度选项
@@ -336,9 +344,11 @@ const clearAll = () => {
   selectStuVals.value = null;
   selectSubjectVals.value = null
   selectCourseCategoryVals.value = null
-  if (childRef.value) {
-    childRef.value.resetSearch()
-  }
+  Object.values(childRefs.value).forEach(child => {
+    if (child?.resetSearch) {
+      child.resetSearch();
+    }
+  });
 };
 // 移除单个条件
 const removeCondition = (type, id) => {
@@ -484,15 +494,15 @@ const props = defineProps({
               :options="followStatusOptions" label="跟进状态" @change="handleFollowChange" type="checkbox" />
             <checkbox-filter v-if="displayArray.includes('sex')" v-model:checkedValues="sexVals" :options="sexOptions"
               label="性别" @change="handleSexChange" type="checkbox" />
-            <checkbox-filter v-if="displayArray.includes('createPeo')" ref="childRef" category="teacher"
+            <checkbox-filter v-if="displayArray.includes('createPeo')" :ref="(el) => handleRef(el, 'createUser')" category="teacher"
               placeholder="请输入创建人" v-model:checkedValues="createPeoVals" :options="createPeoOptions" label="创建人"
               @radioChange="handleCreatePeoChange" type="radio" />
             <checkbox-filter v-if="displayArray.includes('createTime')" v-model:checkedValues="createTimeVals"
               label="创建时间" @datePickerChange="handleCreateTimeChange" type="dateTime" />
-            <checkbox-filter v-if="displayArray.includes('intentionCourse')" ref="childRef" category="course"
+            <checkbox-filter v-if="displayArray.includes('intentionCourse')" :ref="(el) => handleRef(el, 'yiXiangcourse')" category="course"
               placeholder="请输入意向课程" v-model:checkedValues="selectCourseValues" :options="courseListOptions" label="意向课程"
               @radioChange="handleCourseChange" type="radio" />
-            <checkbox-filter v-if="displayArray.includes('reference')" ref="childRef" category="stu"
+            <checkbox-filter v-if="displayArray.includes('reference')" :ref="(el) => handleRef(el, 'tuijianren')" category="stu"
               placeholder="请输入推荐人" v-model:checkedValues="selectStuVals" :options="stuListOptions" label="推荐人"
               @radioChange="handleReferenceChange" type="radio" />
             <checkbox-filter v-if="type == 'dpt' && displayArray.includes('department')"
@@ -504,10 +514,10 @@ const props = defineProps({
               :options="channelListOptions" label="渠道状态" @change="handleChannelChange" type="checkbox" />
             <checkbox-filter v-if="displayArray.includes('channelType')" v-model:checkedValues="selectChannelTypeVals"
               :options="channelTypeOptions" label="渠道类型" @change="handleChannelTypeChange" type="checkbox" />
-            <checkbox-filter v-if="displayArray.includes('subject')" ref="childRef" category="course"
+            <checkbox-filter v-if="displayArray.includes('subject')" :ref="(el) => handleRef(el, 'kemu')" category="course"
               placeholder="请输入科目" v-model:checkedValues="selectSubjectVals" :options="subjectOptions" label="科目"
               @radioChange="handleSubjectChange" type="radio" />
-            <checkbox-filter v-if="displayArray.includes('courseCategory')" ref="childRef" category="course"
+            <checkbox-filter v-if="displayArray.includes('courseCategory')" :ref="(el) => handleRef(el, 'courseType')" category="course"
               placeholder="请选择课程类别" v-model:checkedValues="selectCourseCategoryVals" :options="courseCategoryOptions"
               label="课程类别" @radioChange="handleCourseCategoryChange" type="radio" />
           </div>

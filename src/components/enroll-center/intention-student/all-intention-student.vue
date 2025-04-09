@@ -191,8 +191,6 @@ const initialSelectedValues = savedSelected
 
 // 选中的列（初始化包含重要字段）
 const selectedValues = ref(initialSelectedValues);
-const value1 = ref(1);
-const options = [{ id: 1, type: '1', label: "高" }, { id: 2, type: '2', label: "中" }, { id: 3, type: '3', label: "低" }, { id: 4, type: '4', label: "未知" }]
 // 生成字段选择选项（排除操作列）
 const columnOptions = computed(() =>
   allColumns.value
@@ -471,7 +469,6 @@ const displayArray = ref(['intention','followStatus','sex','createPeo','createTi
         content: "";
         height: 12px;
         left: 0;
-        margin-top: 1px;
         position: absolute;
         width: 4px;
       }
