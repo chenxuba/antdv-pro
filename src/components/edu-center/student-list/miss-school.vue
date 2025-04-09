@@ -48,7 +48,7 @@
           </div>
         </div>
         <div class="table-content mt-2">
-          <a-table :dataSource="dataSource" :pagination="false" :columns="filteredColumns" :row-selection="rowSelection"
+          <a-table :dataSource="dataSource" :pagination="dataSource.length>10" :columns="filteredColumns" :row-selection="rowSelection"
             :scroll="{ x: totalWidth }">
             <template #headerCell="{ column }">
               <template v-if="column.key === 'notRecordedNumber'">

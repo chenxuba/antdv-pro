@@ -54,7 +54,8 @@
           </div>
         </div>
         <div class="table-content mt-2">
-          <a-table :dataSource="dataSource" :pagination="false" :columns="filteredColumns" :row-selection="rowSelection"
+          <div class="tip">家校微信关注数为 1，关注率 33.33%，已超过 10.09% 机构。引导家长关注家校平台，发送学员成果，提升续费率！ <a>点击下载家校物料（易拉宝、台卡等）</a> </div>
+          <a-table :dataSource="dataSource" :pagination="dataSource.length>10" :columns="filteredColumns" :row-selection="rowSelection"
             :scroll="{ x: totalWidth }">
             <template #headerCell="{ column }">
               <template v-if="column.key === 'studentStatus'">
@@ -195,31 +196,7 @@
 <script setup>
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference'])
-const dataSource = ref([
-  {
-    key: '1',
-    name: '胡彦斌',
-    phone: 17601241636,
-    intentionCourse: '初级言语课、高级感统课、中级认知课',
-    channelType: "外部渠道",
-    channel: "抖音",
-    teacher: "张晨",
-    status: "已邀约",
-    followed: "2025-03-31 17:09",
-    nextTime: "2025-03-31 17:09",
-    createTime: "2025-03-31 17:09",
-    createPeo: "张晨",
-    putType: "否",
-    putPeo: "-",
-    birthday: "2022-09-23",
-    wxchat: "1115009958",
-    grade: "一年级",
-    school: "上海市第一人民小学",
-    address: "上海市杨浦区纪念路8号财大科技园区5号楼102A",
-    IDcard1: "CL202209229932",
-    IDcard2: "37292520220922883X",
-  },
-])
+const dataSource = ref([{},{}])
 const allColumns = ref([
   {
     title: '学员/性别/年龄',
@@ -434,6 +411,15 @@ const totalWidth = computed(() =>
     width: 6px;
     margin-right: 4px;
     background: var(--pro-ant-color-primary);
+  }
+}
+
+.tip{
+  padding: 10px;
+  background: #e6f0ff;
+  color: #333;
+  a{
+    color: var(--pro-ant-color-primary);
   }
 }
 </style>
