@@ -403,7 +403,7 @@ const resetPicker = () => {
 }
 
 .dateTimeQuick {
-  .ant-picker-panel-layout {}
+  // .ant-picker-panel-layout {}
 
   .ant-picker-presets {
     position: absolute;

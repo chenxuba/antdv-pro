@@ -285,7 +285,7 @@ const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'crea
       </div>
       <div class="table-content mt-2">
         <a-table :dataSource="dataSource" :pagination="false" :columns="filteredColumns" 
-          :scroll="{ x: totalWidth }">
+          :scroll="{ x: totalWidth }" size="small">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'name'">
               <div class="flex flex-center justify-start">

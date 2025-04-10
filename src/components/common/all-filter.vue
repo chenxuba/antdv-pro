@@ -1,8 +1,40 @@
 <script setup>
-import { ref, nextTick, toRaw } from 'vue';
+import { ref, nextTick, toRaw, onBeforeUnmount } from 'vue';
 import { DeleteOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons-vue';
+import { debounce } from 'lodash-es';
+// 配置参数
+const DEBOUNCE_TIME = 500; // 防抖时间（毫秒）
+// 实时响应的中间值（用于v-model绑定）
+const inputValue = ref('');
+// 创建防抖函数（确保单例）
+const triggerDebounce = debounce((value) => {
+  searchInputKey.value = value;
+  console.log('执行防抖后的操作:', value); // 替换为实际业务逻辑
+}, DEBOUNCE_TIME);
+
+// 监听输入框变化
+watch(inputValue, (newVal) => {
+  triggerDebounce(newVal);
+});
+
+// 组件卸载时清理
+onBeforeUnmount(() => {
+  triggerDebounce.cancel(); // 清除未执行的防抖任务
+});
 const props = defineProps({
   defaultStudentStatus: {
+    type: Number,
+    default: null
+  },
+  defaultOrNotFenClass: {
+    type: Array,
+    default: () => { return [] }
+  },
+  defaultCurrentStatus: {
+    type: Array,
+    default: () => { return [] }
+  },
+  defaultOpenClassStatus: {
     type: Number,
     default: null
   },
@@ -12,7 +44,11 @@ const props = defineProps({
   },
   isQuickShow: {
     type: Boolean,
-    default: true
+    default: false
+  },
+  isQuickOneToOneShow: {
+    type: Boolean,
+    default: false
   },
   displayArray: {
     type: Array,
@@ -20,9 +56,21 @@ const props = defineProps({
   },
   isShowSearchStuPhone: {
     type: Boolean,
-    default: true
+    default: false
+  },
+  isShowSearchStuPhonefilter: {
+    type: Boolean,
+    default: false
+  },
+  isShowOneToOne: {
+    type: Boolean,
+    default: false
   },
   isShowSearchInput: {
+    type: Boolean,
+    default: false
+  },
+  isShowClsssSearch: {
     type: Boolean,
     default: false
   },
@@ -48,12 +96,12 @@ const getNameById = (id) => {
   };
   return search(dptListOptions.value);
 };
-onMounted(() => {
-  dptName.value = getNameById(selectDptVals.value)
-})
+
 const dptName = ref('')
-const searchKey = ref(undefined)
+const searchKeyOneToOne = ref(undefined) //一对一搜索框的值
+const searchKeyStuPhone = ref(undefined) //学员/电话搜索的值
 const searchInputKey = ref(undefined)
+const selectInputKey = ref(undefined)
 const childRefs = ref({});// 存储子组件实例（按 category 分类）
 // 动态收集/清理子组件实例
 const handleRef = (el, category) => {
@@ -65,6 +113,21 @@ const handleRef = (el, category) => {
 };
 const lastUpdated = reactive({});
 const conditionOrder = ref([]); // 存储条件类型的添加顺序
+// 班级选项
+const classOptions = ref([
+  {
+    id: 1,
+    value: '香蕉班',
+  },
+  {
+    id: 2,
+    value: '葡萄班',
+  },
+  {
+    id: 3,
+    value: '苹果班',
+  },
+]);
 // 意向度选项
 const customOptions = ref([
   { id: 1, value: "高" },
@@ -118,6 +181,10 @@ const courseListOptions = ref([
 const selectCourseValues = ref(null);
 
 // 推荐人选项
+const oneToOneOptions = ref([
+  { id: 1, name: "张学良", course: "作业OT训练" },
+  { id: 2, name: "高保庆", course: "交互训练" },
+])
 const stuListOptions = ref([
   { id: 1, name: "张学良", phone: "17601241636" },
   { id: 2, name: "高保庆", phone: "18882327343" },
@@ -210,19 +277,43 @@ const isSetExpirationDateOptions = ref([
 ])
 const selectIsSetExpirationDateVals = ref(null)
 
+// 开班状态选项
+const openClassStatusOptions = ref([
+  { id: 1, value: "开班中" },
+  { id: 2, value: "未开班" },
+])
+const selectOpenClassStatusVals = ref(null)
+
+// 是否排课选项
+const doYouScheduleOptions = ref([
+  { id: 1, value: "已排课" },
+  { id: 2, value: "未排课" },
+])
+const selectDoYouScheduleVals = ref(null)
+
 // 快捷筛选选项（单选）
 const quickFilters = ref([
   { id: 1, name: "今日待跟进", count: 1, selected: false },
   { id: 2, name: "本周新增", count: 0, selected: false },
   { id: 3, name: "逾期未回访", count: 0, selected: false }
 ]);
-
+const quickOneToOneFilters = ref([
+  { id: 1, name: "未分配班主任学员", count: 1, selected: false },
+  { id: 2, name: "待排课学员", count: 0, selected: false },
+]);
 // 处理快捷筛选单选
-const selectQuickFilter = (selectedFilter) => {
-  quickFilters.value.forEach(filter => {
-    filter.selected = filter.id === selectedFilter.id ? !filter.selected : false;
-  });
-  console.log('当前快捷筛选:', quickFilters.value.find(q => q.selected)?.name);
+const selectQuickFilter = (selectedFilter, type) => {
+  if (type == 1) {
+    quickFilters.value.forEach(filter => {
+      filter.selected = filter.id === selectedFilter.id ? !filter.selected : false;
+    });
+    console.log('当前快捷筛选:', quickFilters.value.find(q => q.selected)?.name);
+  } else if (type == 2) {
+    quickOneToOneFilters.value.forEach(filter => {
+      filter.selected = filter.id === selectedFilter.id ? !filter.selected : false;
+    });
+    console.log('当前快捷筛选:', quickOneToOneFilters.value.find(q => q.selected)?.name);
+  }
 };
 
 // 处理常规筛选变化
@@ -313,14 +404,71 @@ const handleIsSetExpirationDateChange = (e) => {
     console.log('有效期状态:', e);
   });
 }
+const handleOpenClassStatusChange = (e) => {
+  nextTick(() => {
+    console.log('开班状态:', e);
+  });
+}
+const handleDoYouScheduleChange = (e) => {
+  nextTick(() => {
+    console.log('是否排课:', e);
+  });
+}
 // 已选条件计算
 const selectedConditions = computed(() => {
   const conditions = [
     {
       type: 'quick',
       label: '快捷筛选',
+      show: true,
       values: quickFilters.value.filter(q => q.selected).map(q => ({ id: q.id, value: q.name }))
     },
+    {
+      type: 'quickOneToOne',
+      label: '快捷筛选',
+      show: true,
+      values: quickOneToOneFilters.value.filter(q => q.selected).map(q => ({ id: q.id, value: q.name }))
+    },
+    {
+      type: 'oneToOneSearch',
+      label: '一对一',
+      show: true,
+      values: (() => {
+        if (!searchKeyOneToOne.value) return [];
+        const item = oneToOneOptions.value.find(opt => opt.id === searchKeyOneToOne.value);
+        return item ? [{ id: item.id, value: `${item.name}～${item.course}` }] : [];
+      })()
+    },
+    {
+      type: 'stuPhoneSearch',
+      label: '学员/电话',
+      show: true,
+      values: (() => {
+        if (!searchKeyStuPhone.value) return [];
+        const item = stuListOptions.value.find(opt => opt.id === searchKeyStuPhone.value);
+        return item ? [{ id: item.id, value: `${item.name}` }] : [];
+      })()
+    },
+    {
+      type: 'selectInputKeySearch',
+      label: '班级名称',
+      show: true,
+      values: (() => {
+        if (!selectInputKey.value) return [];
+        const item = classOptions.value.find(opt => opt.id === selectInputKey.value);
+        return item ? [{ id: item.id, value: `${item.value}` }] : [];
+      })()
+    },
+    {
+      type: 'searchInputKeySearch',
+      label: props.searchLabel,
+      show: true,
+      values: (() => {
+        if (!searchInputKey.value) return [];
+        return [{ id: 0, value: searchInputKey.value }];
+      })()
+    },
+    // searchInputKey
     {
       type: 'intention',
       label: '意向度',
@@ -452,6 +600,18 @@ const selectedConditions = computed(() => {
       show: props.displayArray.includes('isSetExpirationDate'),
       values: isSetExpirationDateOptions.value.filter(opt => opt.id === selectIsSetExpirationDateVals.value)
     },
+    {
+      type: 'openClassStatus',
+      label: '开班状态',
+      show: props.displayArray.includes('openClassStatus'),
+      values: openClassStatusOptions.value.filter(opt => opt.id === selectOpenClassStatusVals.value)
+    },
+    {
+      type: 'doYouSchedule',
+      label: '是否排课',
+      show: props.displayArray.includes('doYouSchedule'),
+      values: doYouScheduleOptions.value.filter(opt => opt.id === selectDoYouScheduleVals.value)
+    },
 
   ];
   return conditions
@@ -472,6 +632,7 @@ watch(classEndingTimeVals, () => lastUpdated.classEndingTime = Date.now());
 watch(classStopTimeVals, () => lastUpdated.classStopTime = Date.now());
 watch(selectCourseValues, () => lastUpdated.intentionCourse = Date.now());
 watch(() => quickFilters.value.map(q => q.selected), () => lastUpdated.quick = Date.now(), { deep: true });
+watch(() => quickOneToOneFilters.value.map(q => q.selected), () => lastUpdated.quickOneToOne = Date.now(), { deep: true });
 watch(selectStuVals, () => lastUpdated.reference = Date.now());
 watch(selectSubjectVals, () => lastUpdated.subject = Date.now());
 watch(selectCourseCategoryVals, () => lastUpdated.courseCategory = Date.now());
@@ -480,6 +641,8 @@ watch(selectCurrentStatusVals, () => lastUpdated.currentStatus = Date.now());
 watch(selectOrNotFenClassVals, () => lastUpdated.orNotFenClass = Date.now());
 watch(selectBillingModeVals, () => lastUpdated.billingMode = Date.now());
 watch(selectIsSetExpirationDateVals, () => lastUpdated.isSetExpirationDate = Date.now());
+watch(selectOpenClassStatusVals, () => lastUpdated.openClassStatus = Date.now());
+watch(selectDoYouScheduleVals, () => lastUpdated.doYouSchedule = Date.now());
 // 观察筛选条件变化，维护顺序队列
 watch(selectedConditions, (newConditions) => {
   const newTypes = newConditions.map(c => c.type);
@@ -510,6 +673,7 @@ const clearAll = () => {
     );
   // 重置单选类
   quickFilters.value.forEach(q => q.selected = false);
+  quickOneToOneFilters.value.forEach(q => q.selected = false);
   createPeoVals.value = null;
   selectCourseValues.value = null;
   selectStuVals.value = null;
@@ -517,15 +681,35 @@ const clearAll = () => {
   selectCourseCategoryVals.value = null
   selectStudentStatusVals.value = null
   selectIsSetExpirationDateVals.value = null
+  selectOpenClassStatusVals.value = null
+  selectDoYouScheduleVals.value = null
   Object.values(childRefs.value).forEach(child => {
     if (child?.resetSearch) {
       child.resetSearch();
     }
   });
+  searchInputKey.value = undefined
+  searchKeyOneToOne.value = undefined
+  searchKeyStuPhone.value = undefined
+  selectInputKey.value = undefined
+  inputValue.value = undefined
 };
 // 移除单个条件
 const removeCondition = (type, id) => {
   switch (type) {
+    case 'oneToOneSearch':
+      searchKeyOneToOne.value = undefined; // 清空搜索框
+      break;
+    case 'stuPhoneSearch':
+      searchKeyStuPhone.value = undefined; // 清空搜索框
+      break;
+    case 'selectInputKeySearch':
+      selectInputKey.value = undefined; // 清空搜索框
+      break;
+    case 'searchInputKeySearch':
+      searchInputKey.value = undefined; // 清空搜索框
+      inputValue.value = undefined
+      break;
     case 'intention':
       selectedValues.value = [];
       break;
@@ -547,6 +731,10 @@ const removeCondition = (type, id) => {
     case 'quick':
       const filter = quickFilters.value.find(q => q.id === id);
       if (filter) filter.selected = false;
+      break;
+    case 'quickOneToOne':
+      const filterOneToOne = quickOneToOneFilters.value.find(q => q.id === id);
+      if (filterOneToOne) filterOneToOne.selected = false;
       break;
     case 'createPeo':  // 新增创建人移除逻辑
       createPeoVals.value = null;
@@ -587,40 +775,74 @@ const removeCondition = (type, id) => {
     case 'isSetExpirationDate':
       selectIsSetExpirationDateVals.value = null;
       break;
+    case 'openClassStatus':
+      selectOpenClassStatusVals.value = null;
+      break;
+    case 'doYouSchedule':
+      selectDoYouScheduleVals.value = null;
+      break;
   }
 };
 const handleChange = (value) => {
   console.log(`selected ${value}`);
 };
 const filterOption = (input, option) => {
-  // 正确访问选项的 label（对应 item.name）和 phone
-  const name = option.label || ''; // 对应 :label="item.name"
-  const phone = option.data?.phone || ''; // 通过 data 传递额外字段
+  // 获取所有待匹配字段
+  const name = option.label?.toString() || '';       // 主标签字段
+  const phone = option.data?.phone?.toString() || ''; // 电话号码
+  const course = option.data?.course?.toString() || ''; // 新增课程字段
 
-  return (
-    name.toLowerCase().includes(input.toLowerCase()) ||
-    phone.includes(input)
-  );
+  // 统一格式处理
+  const normalizedInput = input.toLowerCase().trim();
+  const searchContent = [
+    name.toLowerCase(),
+    phone.toLowerCase(),
+    course.toLowerCase()
+  ].join(' '); // 合并所有字段为搜索字符串
+
+  return searchContent.includes(normalizedInput);
 };
 // 子组件内部需要初始化（在 onMounted 中）
 onMounted(() => {
+  dptName.value = getNameById(selectDptVals.value)
   if (props.defaultStudentStatus) {
     selectStudentStatusVals.value = props.defaultStudentStatus;
   }
+  if (props.defaultCurrentStatus) {
+    selectCurrentStatusVals.value = props.defaultCurrentStatus;
+  }
+  if (props.defaultOrNotFenClass) {
+    selectOrNotFenClassVals.value = props.defaultOrNotFenClass;
+  }
+  if (props.defaultOpenClassStatus) {
+    selectOpenClassStatusVals.value = props.defaultOpenClassStatus;
+  }
 });
 
+const filterClassOption = (input, option) => {
+  return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+};
 </script>
 
 <template>
   <div class="home flex">
     <div class="flex-1 mr-0">
       <!-- 快捷筛选区域 -->
-      <div class="flex" v-if="isQuickShow">
-        <div class="filter-section mb-2 flex-1">
+      <div class="flex">
+        <div class="filter-section mb-2 flex-1" v-if="isQuickShow">
           <span class="section-title mt-0.5">快捷筛选：</span>
           <div class="quick-filters">
             <a-button v-for="filter in quickFilters" :key="filter.id" :type="filter.selected ? 'primary' : 'default'"
-              class="filter-btn" @click="selectQuickFilter(filter)">
+              class="filter-btn" @click="selectQuickFilter(filter, 1)">
+              {{ filter.name }}（{{ filter.count }}）
+            </a-button>
+          </div>
+        </div>
+        <div class="filter-section mb-2 flex-1" v-if="isQuickOneToOneShow">
+          <span class="section-title mt-0.5">快捷筛选：</span>
+          <div class="quick-filters">
+            <a-button v-for="filter in quickOneToOneFilters" :key="filter.id"
+              :type="filter.selected ? 'primary' : 'default'" class="filter-btn" @click="selectQuickFilter(filter, 2)">
               {{ filter.name }}（{{ filter.count }}）
             </a-button>
           </div>
@@ -629,7 +851,7 @@ onMounted(() => {
           <div class="selectBox flex ">
             <div class="label">学员/电话</div>
             <div>
-              <a-select allowClear v-model:value="searchKey" :filter-option="filterOption" show-search
+              <a-select allowClear v-model:value="searchKeyStuPhone" :filter-option="filterOption" show-search
                 placeholder="搜索姓名/手机号" style="width: 240px" @change="handleChange" option-label-prop="label">
                 <a-select-option v-for="(item) in stuListOptions" :key="item.id" :value="item.id" :data="item"
                   :label="item.name">
@@ -649,6 +871,28 @@ onMounted(() => {
                   </div>
                 </a-select-option>
 
+              </a-select>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 mt--1" v-if="isShowOneToOne">
+          <div class="selectBox flex ">
+            <div class="label">一对一</div>
+            <div>
+              <a-select allowClear v-model:value="searchKeyOneToOne" :filter-option="filterOption" show-search
+                placeholder="请输入关键字" style="width: 240px" @change="handleChange" option-label-prop="label">
+                <a-select-option v-for="(item) in oneToOneOptions" :key="item.id" :value="item.id" :data="item"
+                  :label="`${item.name}～${item.course}`">
+                  <div class="flex flex-items-center mb-1">
+                    <div class="ml-2">
+                      <div class="text-sm text-#666  leading-7">{{ item.name }}</div>
+                    </div>
+                    <span>~</span>
+                    <div>
+                      <div class="text-sm text-#666  leading-7">{{ item.course }}</div>
+                    </div>
+                  </div>
+                </a-select-option>
               </a-select>
             </div>
           </div>
@@ -712,13 +956,20 @@ onMounted(() => {
               :ref="(el) => handleRef(el, 'isSetExpirationDate')" category="noSearchRadio" placeholder="请选择有效期状态"
               v-model:checkedValues="selectIsSetExpirationDateVals" :options="isSetExpirationDateOptions"
               label="是否设置有效期" @radioChange="handleIsSetExpirationDateChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('openClassStatus')"
+              :ref="(el) => handleRef(el, 'openClassStatus')" category="noSearchRadio" placeholder="请选择开班状态"
+              v-model:checkedValues="selectOpenClassStatusVals" :options="openClassStatusOptions" label="开班状态"
+              @radioChange="handleOpenClassStatusChange" type="radio" />
+            <checkbox-filter v-if="displayArray.includes('doYouSchedule')" :ref="(el) => handleRef(el, 'doYouSchedule')"
+              category="noSearchRadio" placeholder="请选择排课状态" v-model:checkedValues="selectDoYouScheduleVals"
+              :options="doYouScheduleOptions" label="是否排课" @radioChange="handleDoYouScheduleChange" type="radio" />
           </div>
         </div>
-        <div class="w-100 mt--1" style="position: absolute;right: 12px;" v-if="isShowSearchInput">
+        <div class="w-100 mt--1" v-if="isShowSearchInput">
           <div class="selectBox flex ">
             <div class="label searchLabel">{{ searchLabel }}</div>
             <div>
-              <a-input class="searchInput" :placeholder="searchPlaceholder" v-model:value="searchInputKey">
+              <a-input  class="searchInput" allowClear :placeholder="searchPlaceholder" v-model:value="inputValue">
                 <template #suffix>
                   <SearchOutlined style="color: #bbb;" />
                 </template>
@@ -726,11 +977,21 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <div class="w-100 mt--0.5" v-if="isShowSearchStuPhone && !isQuickShow">
+        <div class="w-100 mt--0.5" v-if="isShowClsssSearch">
+          <div class="selectBox flex ">
+            <div class="label searchLabel">{{ searchLabel }}</div>
+            <div>
+              <a-select v-model:value="selectInputKey" allowClear show-search :placeholder="searchPlaceholder"
+                @change="handleChange" style="width: 200px" :options="classOptions"
+                :fieldNames="{ label: 'value', value: 'id' }" :filter-option="filterClassOption"></a-select>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 mt--0.5" v-if="isShowSearchStuPhonefilter">
           <div class="selectBox flex ">
             <div class="label">学员/电话</div>
             <div>
-              <a-select allowClear v-model:value="searchKey" :filter-option="filterOption" show-search
+              <a-select allowClear v-model:value="searchKeyStuPhone" :filter-option="filterOption" show-search
                 placeholder="搜索姓名/手机号" style="width: 240px" @change="handleChange" option-label-prop="label">
                 <a-select-option v-for="(item) in stuListOptions" :key="item.id" :value="item.id" :data="item"
                   :label="item.name">
@@ -778,14 +1039,13 @@ onMounted(() => {
             <div class="tag-content">
               <span class="condition-label">{{ condition.label }}：</span>
               <div class="condition-values">
-                <template v-if="condition.type === 'quick'">
+                <!-- <template v-if="condition.type === 'createTime'">
                   <span class="value-item">
                     {{ condition.values[0].value }}
-                    <CloseOutlined class="close-icon"
-                      @click.stop="removeCondition(condition.type, condition.values[0].id)" />
+                    <CloseOutlined class="close-icon" @click.stop="removeCondition(condition.type, 0)" />
                   </span>
                 </template>
-                <template v-else-if="condition.type === 'createTime'">
+                <template v-else-if="condition.type === 'classStopTime'">
                   <span class="value-item">
                     {{ condition.values[0].value }}
                     <CloseOutlined class="close-icon" @click.stop="removeCondition(condition.type, 0)" />
@@ -798,7 +1058,13 @@ onMounted(() => {
                       @click.stop="removeCondition(condition.type, value.id)" />
                     <span v-else class="separator">、</span>
                   </span>
-                </template>
+                </template> -->
+                <span v-for="(value, index) in condition.values" :key="value.id" class="value-item">
+                  {{ value.value ?? value.name }}
+                  <CloseOutlined v-if="index === condition.values.length - 1" class="close-icon"
+                    @click.stop="removeCondition(condition.type, value.id)" />
+                  <span v-else class="separator">、</span>
+                </span>
               </div>
             </div>
           </a-tag>
@@ -850,6 +1116,7 @@ onMounted(() => {
   background: #ffffff;
   border-radius: 8px;
   align-items: flex-start;
+  width: 100%;
 }
 
 .debug-panel {

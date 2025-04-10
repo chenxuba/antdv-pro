@@ -11,7 +11,7 @@
         </div>
         <div class="table-content mt-2">
           <a-table :dataSource="dataSource" :pagination="dataSource.length>10" :columns="filteredColumns" 
-            :scroll="{ x: totalWidth }">
+            :scroll="{ x: totalWidth }" size="small">
             <template #bodyCell="{ column, record }">
               <!-- 学员/性别列保持不变 -->
               <template v-if="column.key === 'name'">

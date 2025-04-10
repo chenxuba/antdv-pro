@@ -58,7 +58,7 @@
         <div class="table-content mt-2">
           <div class="tip">家校微信关注数为 1，关注率 33.33%，已超过 10.09% 机构。引导家长关注家校平台，发送学员成果，提升续费率！ <a>点击下载家校物料（易拉宝、台卡等）</a> </div>
           <a-table :dataSource="dataSource" :pagination="dataSource.length>10" :columns="filteredColumns" :row-selection="rowSelection"
-            :scroll="{ x: totalWidth }">
+            :scroll="{ x: totalWidth }" size="small">
             <template #headerCell="{ column }">
               <template v-if="column.key === 'studentStatus'">
                 <span class="mr-1">{{ column.title }}</span>

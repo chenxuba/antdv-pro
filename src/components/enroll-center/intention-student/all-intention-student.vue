@@ -161,6 +161,12 @@ const allColumns = ref([
     width: 190,
   },
   {
+    title: '公有池倒计时',
+    key: "countdown",
+    dataIndex: 'countdown',
+    width: 150,
+  },
+  {
     title: '操作',
     key: 'action',
     fixed: 'right',
@@ -177,7 +183,6 @@ const onClickMenu = ({ key }) => {
   console.log(`Click on item ${key}`);
 }
 const visible = ref(false);
-const actionvisible = ref(false);
 const statusvisible = ref(false);
 // 从本地存储读取已保存的列配置
 const savedSelected = localStorage.getItem('selectedColumns');
@@ -244,7 +249,7 @@ const displayArray = ref(['intention','followStatus','sex','createPeo','createTi
 
 <template>
   <div class="tab-content">
-    <all-filter :displayArray="displayArray"></all-filter>
+    <all-filter :displayArray="displayArray" :isQuickShow="true" :isShowSearchStuPhone="true"></all-filter>
     <div class="tab-table">
       <div class="table-title flex justify-between">
         <div class="total">当前共{{ dataSource.length }}名学员</div>
@@ -294,13 +299,13 @@ const displayArray = ref(['intention','followStatus','sex','createPeo','createTi
             </a-button>
           </a-dropdown>
           <!-- 自定义字段 -->
-          <customize-code v-model:checkedValues="selectedValues" :options="columnOptions" :total="allColumns.length - 2"
-            :num="selectedValues.length - 1" />
+          <customize-code v-model:checkedValues="selectedValues" :options="columnOptions" :total="allColumns.length"
+            :num="selectedValues.length" />
         </div>
       </div>
       <div class="table-content mt-2">
         <a-table :dataSource="dataSource" :pagination="false" :columns="filteredColumns" :row-selection="rowSelection"
-          :scroll="{ x: totalWidth }">
+          :scroll="{ x: totalWidth }" size="small">
           <template #headerCell="{ column }">
             <template v-if="column.key === 'status'">
               <span class="mr-1">{{ column.title }}</span>
@@ -406,17 +411,19 @@ const displayArray = ref(['intention','followStatus','sex','createPeo','createTi
             <template v-if="column.key === 'createPeo'">
               <clamped-text :text="record.createPeo"></clamped-text>
             </template>
+            <template v-if="column.key === 'countdown'">
+              -
+            </template>
             <template v-else-if="column.key === 'action'">
               <span class="flex action">
                 <a class="mr-3">添加跟进</a>
                 <a class="mr-3">试听</a>
                 <div style="cursor: pointer;">
-                  <a-dropdown :trigger="['click']" v-model:open="actionvisible">
+                  <a-dropdown :trigger="['click']" >
                     <a @click.prevent>
                       <div class="intention">更多
-                        <CaretDownOutlined v-if="!actionvisible" class="ml-1 text-#1677ff"
+                        <CaretDownOutlined class="ml-1 text-#1677ff"
                           :style="{ 'font-size': '12px' }" />
-                        <CaretUpOutlined v-if="actionvisible" class="ml-1 text-#ccc" :style="{ 'font-size': '12px' }" />
                       </div>
                     </a>
                     <template #overlay>

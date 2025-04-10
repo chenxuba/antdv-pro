@@ -56,7 +56,7 @@
             <div class="cursor-pointer">缺课条件配置</div>
              </div>
           <a-table :dataSource="dataSource" :pagination="dataSource.length>10" :columns="filteredColumns" :row-selection="rowSelection"
-            :scroll="{ x: totalWidth }">
+            :scroll="{ x: totalWidth }" size="small">
             <template #headerCell="{ column }">
               <template v-if="column.key === 'notRecordedNumber'">
                 <span class="mr-1">{{ column.title }}</span>

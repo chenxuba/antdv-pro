@@ -18,7 +18,7 @@
         </div>
         <div class="table-content mt-2">
           <a-table :dataSource="dataSource" :pagination="dataSource.length>10" :columns="filteredColumns" :row-selection="rowSelection"
-            :scroll="{ x: totalWidth }">
+            :scroll="{ x: totalWidth }" size="small">
             <template #bodyCell="{ column, record }">
               <template v-if="column.key === 'name'">
                 <div class="flex">

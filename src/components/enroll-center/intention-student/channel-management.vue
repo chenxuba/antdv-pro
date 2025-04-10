@@ -180,7 +180,7 @@ const displayArray = ref(['channelCategory','channelStatus','channelType'])
       </div>
       <div class="table-content mt-2">
         <a-table rowKey="id" :dataSource="dataSource" :pagination="false" :columns="allColumns"
-          :row-selection="rowSelection" :scroll="{ x: totalWidth }">
+          :row-selection="rowSelection" :scroll="{ x: totalWidth }" size="small">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'status'">
               <a-tag v-if="record.status == 1" color="blue">启用中</a-tag>

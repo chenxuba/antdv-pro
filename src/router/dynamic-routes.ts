@@ -129,17 +129,17 @@ export default [
         },
       },
       {
-        path: '/exception/5001',
-        name: 'Exception5001',
-        component: () => import('~/pages/exception/500.vue'),
+        path: '/edu-center/class-list',
+        name: 'ClassList',
+        component: () => import('~/pages/edu-center/class-list.vue'),
         meta: {
           title: '班级管理',
         },
       },
       {
-        path: '/exception/5002',
-        name: 'Exception5002',
-        component: () => import('~/pages/exception/500.vue'),
+        path: '/edu-center/oneToOne',
+        name: 'OneToOne',
+        component: () => import('~/pages/edu-center/oneToOne.vue'),
         meta: {
           title: '一对一',
         },
