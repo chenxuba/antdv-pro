@@ -726,7 +726,7 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <div class="w-100 mt--1" v-if="isShowSearchStuPhone && !isQuickShow">
+        <div class="w-100 mt--0.5" v-if="isShowSearchStuPhone && !isQuickShow">
           <div class="selectBox flex ">
             <div class="label">学员/电话</div>
             <div>
