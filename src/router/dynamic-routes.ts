@@ -169,9 +169,9 @@ export default [
         },
       },
       {
-        path: '/exception/5006',
-        name: 'Exception5006',
-        component: () => import('~/pages/exception/500.vue'),
+        path: '/edu-center/makeup-a-missedlesson',
+        name: 'MakeupAmissedLesson',
+        component: () => import('~/pages/edu-center/makeup-a-missedlesson.vue'),
         meta: {
           title: '补课',
         },

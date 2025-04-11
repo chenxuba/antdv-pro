@@ -209,7 +209,7 @@ const rowSelection = {
 };
 const defaultStudentStatus = ref(1)
 // 从本地存储读取已保存的列配置
-const savedSelected = localStorage.getItem('student-latitude');
+const savedSelected = localStorage.getItem('schedule-latitude');
 const keysArray = allColumns.value
   .map(column => column?.key) // 可选链操作符
   .filter(key => typeof key !== 'undefined'); // 过滤未定义的值
@@ -261,7 +261,7 @@ watch(selectedValues, (newVal) => {
 }, { deep: true });
 // 自动保存列配置到本地存储
 watch(selectedValues, (newVal) => {
-  localStorage.setItem('student-latitude', JSON.stringify(newVal));
+  localStorage.setItem('schedule-latitude', JSON.stringify(newVal));
 }, { deep: true });
 // 表格总宽度计算
 const totalWidth = computed(() =>
