@@ -1,13 +1,13 @@
 <template>
   <div class="bg-white h-82vh flex justify-center flex-items-center pb-60">
-    <div
+    <div @click="handleFaceSign(1)"
       class="h-56 mr-6 hover-shadow w-55 justify-items-center  flex-col border-1 border-color-#0000000d border-solid rounded-2 cursor-pointer">
       <img width="120" height="120" class="mb-2"
         src="https://pcsys.admin.ybc365.com//e7cb1394-1c75-47ec-b37c-ad95f6863504.png" alt="">
       <div class="text-4 text-#222 font-500 mb-1">人脸采集</div>
       <div class="text-3 text-#222">先采集，再考勤</div>
     </div>
-    <div
+    <div @click="handleFaceSign(2)"
       class="h-56 mr-6 hover-shadow w-55 justify-items-center flex-col border-1 border-color-#0000000d border-solid rounded-2 cursor-pointer">
       <img width="120" height="120" class="mb-2"
         src="https://pcsys.admin.ybc365.com//1300b671-9022-4b3f-9cc6-a1deec75d52e.png" alt="">
@@ -53,7 +53,37 @@
 
 <script setup>
 import { InfoCircleFilled, RightOutlined } from '@ant-design/icons-vue';
+const router = useRouter()
+// 在组件作用域外定义窗口引用（避免被Vue响应式代理）
+let faceWindow = null
+const handleFaceSign = (type) => {
+  const newUrl = router.resolve({
+    path: '/pc/face',
+    query: { type } // 确保使用最新的 type
+  }).href
 
+  // 判断窗口是否存在且未关闭
+  if (faceWindow && !faceWindow.closed) {
+    // 比较当前 URL 与新 URL
+    if (faceWindow.location.href !== newUrl) {
+      // URL 不同时先关闭旧窗口
+      faceWindow.close()
+      faceWindow = window.open(newUrl, '_blank')
+    } else {
+      // 相同则直接聚焦
+      faceWindow.focus()
+    }
+  } else {
+    // 打开新窗口并保存引用
+    faceWindow = window.open(newUrl, '_blank')
+  }
+
+  // 处理可能被拦截的情况
+  if (!faceWindow || faceWindow.closed) {
+    faceWindow = null
+    // 可选：添加重试逻辑或用户提示
+  }
+}
 </script>
 
 <style lang="less" scoped>

@@ -19,6 +19,14 @@ export default [
     },
   },
   {
+    path: '/pc/face',
+    name: 'Face',
+    component: () => import('~/pages/edu-center/face.vue'),
+    meta: {
+      title: '人脸采集',
+    },
+  },
+  {
     path: '/common',
     name: 'LayoutBasicRedirect',
     component: Layout,
