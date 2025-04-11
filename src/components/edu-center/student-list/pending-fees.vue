@@ -2,7 +2,7 @@
   <div>
     <!-- 学员筛选条件 -->
     <div class="filter-wrap mt-2 bg-white  pl-3 pr-3 rounded-4">
-      <all-filter :displayArray="displayArray" :is-quick-show="false" :isShowSearchStuPhone="true"></all-filter>
+      <all-filter :displayArray="displayArray" :is-quick-show="false" :is-show-search-stu-phonefilter="true"></all-filter>
     </div>
     <div class="student-list mt-2 pt-3 pb-3 pl-6 pr-6 bg-white rounded-4">
       <div class="tab-table">

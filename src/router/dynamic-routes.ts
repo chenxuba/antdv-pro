@@ -161,9 +161,9 @@ export default [
         },
       },
       {
-        path: '/exception/5005',
-        name: 'Exception5005',
-        component: () => import('~/pages/exception/500.vue'),
+        path: '/edu-center/class-record',
+        name: 'ClassRecord',
+        component: () => import('~/pages/edu-center/class-record.vue'),
         meta: {
           title: '上课记录',
         },
