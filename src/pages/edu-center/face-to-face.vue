@@ -14,7 +14,7 @@ const activeKey = ref('1');
           <face-keep></face-keep>
         </a-tab-pane>
         <a-tab-pane key="2" tab="考勤记录">
-          考勤记录
+          <face-record></face-record>
         </a-tab-pane>
         <a-tab-pane key="3" tab="考勤设备管理">
           考勤设备管理
