@@ -177,11 +177,12 @@ export default [
         },
       },
       {
-        path: '/exception/5007',
-        name: 'Exception5007',
-        component: () => import('~/pages/exception/500.vue'),
+        path: '/edu-center/face-to-face',
+        name: 'FaceToFace',
+        component: () => import('~/pages/edu-center/face-to-face.vue'),
         meta: {
           title: '人脸考勤',
+          new:true
         },
       },
       {
