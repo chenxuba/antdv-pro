@@ -42,6 +42,10 @@ const props = defineProps({
     type: String,
     default: 'all'
   },
+  isShowChangTeacherSearch: {
+    type: Boolean,
+    default: false
+  },
   isQuickShow: {
     type: Boolean,
     default: false
@@ -102,6 +106,8 @@ const searchKeyOneToOne = ref(undefined) //一对一搜索框的值
 const searchKeyStuPhone = ref(undefined) //学员/电话搜索的值
 const searchInputKey = ref(undefined)
 const selectInputKey = ref(undefined)
+const teacherType = ref(1)
+const selectTeacher = ref(undefined)
 const childRefs = ref({});// 存储子组件实例（按 category 分类）
 // 动态收集/清理子组件实例
 const handleRef = (el, category) => {
@@ -430,6 +436,16 @@ const selectedConditions = computed(() => {
       values: quickOneToOneFilters.value.filter(q => q.selected).map(q => ({ id: q.id, value: q.name }))
     },
     {
+      type: 'teacherSelect',
+      label: teacherType==1?'上课老师':"上课助教",
+      show: true,
+      values: (() => {
+        if (!selectTeacher.value) return [];
+        const item = createPeoOptions.value.find(opt => opt.id === selectTeacher.value);
+        return item ? [{ id: item.id, value: `${item.value}` }] : [];
+      })()
+    },
+    {
       type: 'oneToOneSearch',
       label: '一对一',
       show: true,
@@ -693,10 +709,14 @@ const clearAll = () => {
   searchKeyStuPhone.value = undefined
   selectInputKey.value = undefined
   inputValue.value = undefined
+  selectTeacher.value = undefined
 };
 // 移除单个条件
 const removeCondition = (type, id) => {
   switch (type) {
+    case 'teacherSelect':
+      selectTeacher.value = undefined; // 清空选择框
+      break;
     case 'oneToOneSearch':
       searchKeyOneToOne.value = undefined; // 清空搜索框
       break;
@@ -789,6 +809,7 @@ const handleChange = (value) => {
 const filterOption = (input, option) => {
   // 获取所有待匹配字段
   const name = option.label?.toString() || '';       // 主标签字段
+  const value = option.data?.value?.toString() || ''; // 电话号码
   const phone = option.data?.phone?.toString() || ''; // 电话号码
   const course = option.data?.course?.toString() || ''; // 新增课程字段
 
@@ -796,6 +817,7 @@ const filterOption = (input, option) => {
   const normalizedInput = input.toLowerCase().trim();
   const searchContent = [
     name.toLowerCase(),
+    value.toLowerCase(),
     phone.toLowerCase(),
     course.toLowerCase()
   ].join(' '); // 合并所有字段为搜索字符串
@@ -822,6 +844,11 @@ onMounted(() => {
 const filterClassOption = (input, option) => {
   return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
+// 改变老师类型选择
+const changeTeacherType = ()=>{
+  selectTeacher.value = undefined
+}
+
 </script>
 
 <template>
@@ -969,7 +996,7 @@ const filterClassOption = (input, option) => {
           <div class="selectBox flex ">
             <div class="label searchLabel">{{ searchLabel }}</div>
             <div>
-              <a-input  class="searchInput" allowClear :placeholder="searchPlaceholder" v-model:value="inputValue">
+              <a-input class="searchInput" allowClear :placeholder="searchPlaceholder" v-model:value="inputValue">
                 <template #suffix>
                   <SearchOutlined style="color: #bbb;" />
                 </template>
@@ -1013,6 +1040,21 @@ const filterClassOption = (input, option) => {
 
               </a-select>
             </div>
+          </div>
+        </div>
+        <div class="w-100 mt--0.5" v-if="isShowChangTeacherSearch">
+          <div>
+            <a-input-group compact class="compactInput">
+              <a-select v-model:value="teacherType" class="w-25" @change="changeTeacherType">
+                <a-select-option :value="1">上课老师</a-select-option>
+                <a-select-option :value="2">上课助教</a-select-option>
+              </a-select>
+              <a-select show-search :filter-option="filterOption" v-model:value="selectTeacher" class="w-50"
+                placeholder="请输入上课老师">
+                <a-select-option v-for="(item, index) in createPeoOptions" :key="index" :value="item.id" :data="item">{{
+                  item.value }}</a-select-option>
+              </a-select>
+            </a-input-group>
           </div>
         </div>
       </div>
@@ -1200,5 +1242,10 @@ const filterClassOption = (input, option) => {
 .filter-btn {
   height: 28px;
   padding: 0 12px;
+}
+
+:deep(.compactInput.ant-input-group.ant-input-group-compact) {
+  display: flex !important;
+  justify-content: flex-end !important;
 }
 </style>

@@ -153,9 +153,9 @@ export default [
         },
       },
       {
-        path: '/exception/5004',
-        name: 'Exception5004',
-        component: () => import('~/pages/exception/500.vue'),
+        path: '/edu-center/roll-call-list',
+        name: 'RollCall',
+        component: () => import('~/pages/edu-center/roll-call-list.vue'),
         meta: {
           title: '上课点名',
         },
