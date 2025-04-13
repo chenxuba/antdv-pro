@@ -57,7 +57,7 @@
           </div>
         </div>
         <div class="table-content mt-2">
-          <a-table :dataSource="dataSource" :pagination="dataSource.length > 10" :columns="filteredColumns"
+          <a-table :dataSource="dataSource"  :pagination="dataSource.length > 10" :columns="filteredColumns"
             :row-selection="rowSelection" :scroll="{ x: totalWidth }" size="small" >
             <template #bodyCell="{ column, record }">
               <template v-if="column.key === 'name'">
@@ -229,7 +229,7 @@ const rowSelection = {
 };
 const defaultOpenClassStatus = ref(1)
 // 从本地存储读取已保存的列配置
-const savedSelected = localStorage.getItem('register-read-list');
+const savedSelected = localStorage.getItem('class-list');
 const keysArray = allColumns.value
   .map(column => column?.key) // 可选链操作符
   .filter(key => typeof key !== 'undefined'); // 过滤未定义的值
@@ -281,7 +281,7 @@ watch(selectedValues, (newVal) => {
 }, { deep: true });
 // 自动保存列配置到本地存储
 watch(selectedValues, (newVal) => {
-  localStorage.setItem('register-read-list', JSON.stringify(newVal));
+  localStorage.setItem('class-list', JSON.stringify(newVal));
 }, { deep: true });
 // 表格总宽度计算
 const totalWidth = computed(() =>
