@@ -8,33 +8,15 @@
     <div class="student-list mt-3 pt-3 pb-3 pl-6 pr-6 bg-white rounded-4">
       <div class="tab-table">
         <div class="table-title flex justify-between">
-          <div class="total">共 {{ dataSource.length }} 条记录 ，共记录 2 课时，共消耗学费 ¥ 400.00</div>
+          <div class="total">总计 {{ dataSource.length }} 个标签 ，2 个标签已启用</div>
           <div class="edit flex">
-            <a-button class="mr-2">变更日志</a-button>
-            <a-dropdown class="mr-2">
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item key="1">
-                    批量导出
-                  </a-menu-item>
-                  <a-menu-item key="3">
-                    导出记录
-                  </a-menu-item>
-                </a-menu>
-              </template>
-              <a-button>
-                导出数据
-                <DownOutlined :style="{ fontSize: '10px' }" />
-              </a-button>
-            </a-dropdown>
-            <!-- 自定义字段 -->
-            <customize-code v-model:checkedValues="selectedValues" :options="columnOptions" :total="allColumns.length - 1"
-              :num="selectedValues.length - 1" />
+            <a-button class="mr-2">订单标签设置</a-button>
+            <a-button type="primary">新建标签</a-button>
           </div>
         </div>
         <div class="table-content mt-2">
           <a-table :dataSource="dataSource" :pagination="dataSource.length > 10" :columns="filteredColumns"
-            :row-selection="rowSelection" :scroll="{ x: totalWidth }" size="small">
+            :scroll="{ x: totalWidth }" size="small">
             <!-- <template #headerCell="{ column }">
               <template v-if="column.key === 'studentStatus'">
                 <span class="mr-1">{{ column.title }}</span>
@@ -46,212 +28,43 @@
               </template>
             </template> -->
             <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'classDateTime'">
-                <div class="name">
-                  <div class="text-#000">2025-04-10 (周四)</div>
-                  <div class="text-3 text-#888 flex flex-items-center">15:00 ~ 16:00</div>{{ record.a }}
-                </div>
+              <template v-if="column.key === 'orderTag'">
+               {{ record.a }}转介绍
               </template>
-              <template v-if="column.key === 'name'">
-                <div class="flex">
-                  <img width="40" height="40" class="mr-2" style="border-radius: 100%;"
-                    src="https://cdn.schoolpal.cn/schoolpal/next-erp/avator_male.png?x-oss-process=image/resize,w_120"
-                    alt="">
-                  <div class="name mt-1">
-                    <div class="text-#222">龙龙</div>
-                    <div class="text-3 text-#888 flex flex-items-center">176****1636</div>
-                  </div>
-                </div>
-              </template>
-              <template v-if="column.key === 'linkClass1v1'">
-                龙龙-初级认知课
-              </template>
-              <template v-if="column.key === 'course'">
-                初级认知课
-              </template>
-              <template v-if="column.key === 'subject'">
-                自费
-              </template>
-              <template v-if="column.key === 'scheduleType'">
-                1对1日程
-              </template>
-              <template v-if="column.key === 'studentId'">
-                1对1学员
-              </template>
-              <template v-if="column.key === 'classStatus'">
-                到课
-              </template>
-              <template v-if="column.key === 'deductionAccount'">
-                初级认知课
-              </template>
-              <template v-if="column.key === 'courseNotMethod'">
-                按课时
-              </template>
-              <template v-if="column.key === 'classCallNum'">
-                1课时
-              </template>
-              <template v-if="column.key === 'useNum'">
-                1课时
-              </template>
-              <template v-if="column.key === 'oweNum'">
-                -
-              </template>
-              <template v-if="column.key === 'usePrice'">
-                ¥200.00
-              </template>
-              <template v-if="column.key === 'mainTeacher'">
-                张晨
-              </template>
-              <template v-if="column.key === 'subTeacher'">
-                陈瑞生
-              </template>
-              <template v-if="column.key === 'callupdateTime'">
-                2024-12-23 13:22
-              </template>
-              <template v-if="column.key === 'externalRemarks'">
-                -
-              </template>
-              <template v-if="column.key === 'remarks'">
-                -
+              <template v-if="column.key === 'status'">
+                <a-switch v-model:checked="checked" />
               </template>
               <template v-if="column.key === 'action'">
-                <a href="#">上课记录详情</a>
+                <a href="#">编辑</a>
               </template>
-
             </template>
           </a-table>
         </div>
       </div>
     </div>
+    <student-info-drawer v-model:open="openDrawer"></student-info-drawer>
+    <order-detail-drawer v-model:open="openOrderDetailDrawer"></order-detail-drawer>
   </div>
 </template>
 
 <script setup>
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference', 'studentStatus', 'classEndingTime', 'classStopTime'])
-const dataSource = ref([{key:1}, {key:2}])
+const dataSource = ref([{ key: 1 }, { key: 2 }])
+const checked = ref(true)
 const allColumns = ref([
   {
-    title: '上课日期/时段',
-    dataIndex: 'classDateTime',
-    key: "classDateTime",
+    title: '订单标签',
+    dataIndex: 'orderTag',
+    key: "orderTag",
     fixed: 'left',
-    width: 160,
     required: true // 新增必选标识
 
   },
   {
-    title: '学员/电话',
-    dataIndex: 'name',
-    key: 'name',
-    fixed: 'left',
-    width: 160,
-    required: true // 新增必选标识
-  },
-  {
-    title: '所属班级/1v1',
-    key: 'linkClass1v1',
-    dataIndex: 'cloud',
-    width: 180
-  },
-  {
-    title: '所属课程',
-    key: 'course',
-    dataIndex: 'course',
-    width: 160
-
-  },
-  {
-    title: '科目',
-    dataIndex: 'subject',
-    key: "subject",
-    width: 110
-  },
-  {
-    title: '日程类型',
-    dataIndex: 'scheduleType',
-    key: "scheduleType",
-    width: 140
-  },
-  {
-    title: '学员身份',
-    dataIndex: 'studentId',
-    key: "studentId",
-    width: 140
-  },
-  {
-    title: '上课状态',
-    dataIndex: 'classStatus',
-    key: "classStatus",
-    width: 120
-
-  },
-  {
-    title: '扣费课程账户',
-    dataIndex: 'deductionAccount',
-    key: "deductionAccount",
-    width: 160
-
-  },
-  {
-    title: '课消方式',
-    key: 'courseNotMethod',
-    dataIndex: 'courseNotMethod',
-    width: 110
-  },
-  {
-    title: '上课点名数量',
-    dataIndex: 'classCallNum',
-    key: "classCallNum",
-    width: 160
-  },
-  {
-    title: '消耗数量',
-    dataIndex: 'useNum',
-    key: "useNum",
-    width: 140
-  },
-  {
-    title: '拖欠数量',
-    dataIndex: 'oweNum',
-    key: "oweNum",
-    width: 140
-  },
-  {
-    title: '消耗学费',
-    dataIndex: 'usePrice',
-    key: "usePrice",
-    width: 140
-  },
-  {
-    title: '上课老师',
-    dataIndex: 'mainTeacher',
-    key: "mainTeacher",
-    width: 140
-  },
-  {
-    title: '上课助教',
-    dataIndex: 'subTeacher',
-    key: "subTeacher",
-    width: 140
-  },
-  {
-    title: '点名更新时间',
-    key: "callupdateTime",
-    dataIndex: 'callupdateTime',
-    width: 200,
-  },
-  {
-    title: '对内备注',
-    dataIndex: 'externalRemarks',
-    key: 'externalRemarks',
-    width: 140,
-  },
-  {
-    title: '对外备注',
-    dataIndex: 'remarks',
-    key: 'remarks',
-    width: 140,
+    title: '启用状态',
+    dataIndex: 'status',
+    key: "status",
   },
   {
     title: '操作',
@@ -262,14 +75,10 @@ const allColumns = ref([
     required: true
   },
 ])
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-};
+
 const defaultStudentStatus = ref(1)
 // 从本地存储读取已保存的列配置
-const savedSelected = localStorage.getItem('student-latitude');
+const savedSelected = localStorage.getItem('order-tag-admin');
 const keysArray = allColumns.value
   .map(column => column?.key) // 可选链操作符
   .filter(key => typeof key !== 'undefined'); // 过滤未定义的值
@@ -321,12 +130,20 @@ watch(selectedValues, (newVal) => {
 }, { deep: true });
 // 自动保存列配置到本地存储
 watch(selectedValues, (newVal) => {
-  localStorage.setItem('student-latitude', JSON.stringify(newVal));
+  localStorage.setItem('order-tag-admin', JSON.stringify(newVal));
 }, { deep: true });
 // 表格总宽度计算
 const totalWidth = computed(() =>
   filteredColumns.value.reduce((acc, column) => acc + (column.width || 0), 0)
 );
+const openDrawer = ref(false)
+const handleSeeStuData = () => {
+  openDrawer.value = true
+}
+const openOrderDetailDrawer = ref(false)
+const handleOrderDetail = () => {
+  openOrderDetailDrawer.value = true
+}
 </script>
 
 <style lang="less" scoped>

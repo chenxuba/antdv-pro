@@ -8,12 +8,14 @@
     <div class="student-list mt-3 pt-3 pb-3 pl-6 pr-6 bg-white rounded-4">
       <div class="tab-table">
         <div class="table-title flex justify-between">
-          <div class="total">共 {{ dataSource.length }} 条记录 ，共记录 2 课时，共消耗学费 ¥ 400.00</div>
+          <div class="total">共 {{ dataSource.length }} 条订单 ，实收总计 10438 元，共欠费 100 元</div>
           <div class="edit flex">
-            <a-button class="mr-2">变更日志</a-button>
             <a-dropdown class="mr-2">
               <template #overlay>
                 <a-menu>
+                  <a-menu-item key="0">
+                    导入学员订单
+                  </a-menu-item>
                   <a-menu-item key="1">
                     批量导出
                   </a-menu-item>
@@ -23,18 +25,18 @@
                 </a-menu>
               </template>
               <a-button>
-                导出数据
+                导入/导出学员订单
                 <DownOutlined :style="{ fontSize: '10px' }" />
               </a-button>
             </a-dropdown>
             <!-- 自定义字段 -->
-            <customize-code v-model:checkedValues="selectedValues" :options="columnOptions" :total="allColumns.length - 1"
-              :num="selectedValues.length - 1" />
+            <customize-code v-model:checkedValues="selectedValues" :options="columnOptions"
+              :total="allColumns.length - 1" :num="selectedValues.length - 1" />
           </div>
         </div>
         <div class="table-content mt-2">
           <a-table :dataSource="dataSource" :pagination="dataSource.length > 10" :columns="filteredColumns"
-            :row-selection="rowSelection" :scroll="{ x: totalWidth }" size="small">
+            :scroll="{ x: totalWidth }" size="small">
             <!-- <template #headerCell="{ column }">
               <template v-if="column.key === 'studentStatus'">
                 <span class="mr-1">{{ column.title }}</span>
@@ -46,102 +48,122 @@
               </template>
             </template> -->
             <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'classDateTime'">
-                <div class="name">
-                  <div class="text-#000">2025-04-10 (周四)</div>
-                  <div class="text-3 text-#888 flex flex-items-center">15:00 ~ 16:00</div>{{ record.a }}
-                </div>
-              </template>
               <template v-if="column.key === 'name'">
-                <div class="flex">
-                  <img width="40" height="40" class="mr-2" style="border-radius: 100%;"
-                    src="https://cdn.schoolpal.cn/schoolpal/next-erp/avator_male.png?x-oss-process=image/resize,w_120"
-                    alt="">
-                  <div class="name mt-1">
-                    <div class="text-#222">龙龙</div>
-                    <div class="text-3 text-#888 flex flex-items-center">176****1636</div>
+
+                <a-tooltip>
+                  <template #title>查看学员档案</template>
+                  <div class="flex cursor-pointer  flex-items-center h-4 w-30" @click="handleSeeStuData()">
+                    <img width="36" height="36" class="mr-2" style="border-radius: 100%;"
+                      src="https://cdn.schoolpal.cn/schoolpal/next-erp/avator_male.png?x-oss-process=image/resize,w_120"
+                      alt="">
+                    <div class="name mt-1">
+                      <div class="text-#222">龙龙{{ record.a }}</div>
+                      <div class="text-3 text-#888 flex flex-items-center">176****1636</div>
+                    </div>
                   </div>
-                </div>
+                </a-tooltip>
               </template>
-              <template v-if="column.key === 'linkClass1v1'">
-                龙龙-初级认知课
+              <template v-if="column.key === 'orderNum'">
+                <span class="text-#06f flex-center justify-start cursor-pointer"
+                  @click="handleOrderDetail()">20250410144858420324570 {{ record.a }}
+                  <a-tooltip>
+                    <template #title>订单欠费未缴清</template>
+                    <span
+                      class="w-5 h-5 block text-red bg-#FBE7E6 text-3 ml-1 text-center line-height-5 rounded-1">欠</span>
+                  </a-tooltip>
+                </span>
               </template>
-              <template v-if="column.key === 'course'">
-                初级认知课
-              </template>
-              <template v-if="column.key === 'subject'">
-                自费
-              </template>
-              <template v-if="column.key === 'scheduleType'">
-                1对1日程
-              </template>
-              <template v-if="column.key === 'studentId'">
-                1对1学员
-              </template>
-              <template v-if="column.key === 'classStatus'">
-                到课
-              </template>
-              <template v-if="column.key === 'deductionAccount'">
-                初级认知课
-              </template>
-              <template v-if="column.key === 'courseNotMethod'">
-                按课时
-              </template>
-              <template v-if="column.key === 'classCallNum'">
-                1课时
-              </template>
-              <template v-if="column.key === 'useNum'">
-                1课时
-              </template>
-              <template v-if="column.key === 'oweNum'">
-                -
-              </template>
-              <template v-if="column.key === 'usePrice'">
-                ¥200.00
-              </template>
-              <template v-if="column.key === 'mainTeacher'">
-                张晨
-              </template>
-              <template v-if="column.key === 'subTeacher'">
-                陈瑞生
-              </template>
-              <template v-if="column.key === 'callupdateTime'">
-                2024-12-23 13:22
-              </template>
-              <template v-if="column.key === 'externalRemarks'">
-                -
-              </template>
-              <template v-if="column.key === 'remarks'">
-                -
-              </template>
-              <template v-if="column.key === 'action'">
-                <a href="#">上课记录详情</a>
+              <template v-else-if="column.key === 'orderType'">
+                {{ ['新订单', '续费订单', '转课订单'][Math.floor(Math.random() * 3)] }}
               </template>
 
+              <template v-else-if="column.key === 'orderForm'">
+                {{ ['官网', '小程序', '线下'][Math.floor(Math.random() * 3)] }}
+              </template>
+
+              <template v-else-if="column.key === 'orderTag'">
+                {{ ['普通', '紧急', 'VIP'][Math.floor(Math.random() * 3)] }}
+              </template>
+
+              <template v-else-if="column.key === 'orderStatus'">
+                {{ ['待支付', '已完成', '已取消'][Math.floor(Math.random() * 3)] }}
+              </template>
+
+              <template v-else-if="column.key === 'handleContent'">
+                {{ ['课程购买', '退费处理', '转班操作'][Math.floor(Math.random() * 3)] }}
+              </template>
+
+              <template v-else-if="column.key === 'orderSalesperson'">
+                销售{{ ['王', '李', '陈'][Math.floor(Math.random() * 3)] }}经理
+              </template>
+
+              <template v-else-if="column.key === 'handledBy'">
+                经办人{{ ['张', '刘', '周'][Math.floor(Math.random() * 3)] }}
+              </template>
+
+              <template v-else-if="column.key === 'handledDate'">
+                {{ `2024-06-${15 + Math.floor(Math.random() * 3)}` }}
+              </template>
+
+              <template v-else-if="column.key === 'createTime'">
+                {{ `2024-06-${15 + Math.floor(Math.random() * 3)} 14:30` }}
+              </template>
+
+              <template v-else-if="column.key === 'accountChanges'">
+                <div>充值金额 <span class="text-#ff3333 font-800">-300.00</span></div>
+                <div>赠送金额 <span class="text-#ff3333 font-800">-0.00</span> </div>
+              </template>
+
+              <template v-else-if="column.key === 'discount'">
+                -
+              </template>
+
+              <template v-else-if="column.key === 'wholeOrderDiscount'">
+                <span class="font-800">0.00</span>
+              </template>
+
+              <template v-else-if="column.key === 'shouldPutRefund'">
+                <span class="font-800">+1000.00</span>
+              </template>
+
+              <template v-else-if="column.key === 'solidPutRefund'">
+                <div class="text-#222 font-800">+3000.00</div>
+                <div class="text-#888">共1件商品</div>
+              </template>
+
+              <template v-else-if="column.key === 'owePrice'">
+                <div><span class="text-#ff3333 font-800">300.00</span></div>
+              </template>
+
+              <template v-if="column.key === 'action'">
+                <a href="#">查看收据</a>
+              </template>
             </template>
           </a-table>
         </div>
       </div>
     </div>
+    <student-info-drawer v-model:open="openDrawer"></student-info-drawer>
+    <order-detail-drawer v-model:open="openOrderDetailDrawer"></order-detail-drawer>
   </div>
 </template>
 
 <script setup>
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference', 'studentStatus', 'classEndingTime', 'classStopTime'])
-const dataSource = ref([{key:1}, {key:2}])
+const dataSource = ref([{ key: 1 }, { key: 2 }])
 const allColumns = ref([
   {
-    title: '上课日期/时段',
-    dataIndex: 'classDateTime',
-    key: "classDateTime",
+    title: '订单编号',
+    dataIndex: 'orderNum',
+    key: "orderNum",
     fixed: 'left',
-    width: 160,
+    width: 250,
     required: true // 新增必选标识
 
   },
   {
-    title: '学员/电话',
+    title: '报名学员',
     dataIndex: 'name',
     key: 'name',
     fixed: 'left',
@@ -149,109 +171,96 @@ const allColumns = ref([
     required: true // 新增必选标识
   },
   {
-    title: '所属班级/1v1',
-    key: 'linkClass1v1',
-    dataIndex: 'cloud',
-    width: 180
+    title: '订单类型',
+    key: 'orderType',
+    dataIndex: 'orderType',
+    width: 130
   },
   {
-    title: '所属课程',
-    key: 'course',
-    dataIndex: 'course',
-    width: 160
+    title: '订单来源',
+    key: 'orderForm',
+    dataIndex: 'orderForm',
+    width: 130
+  },
+  {
+    title: '订单标签',
+    key: 'orderTag',
+    dataIndex: 'orderTag',
+    width: 130
+  },
+  {
+    title: '订单状态',
+    key: 'orderStatus',
+    dataIndex: 'orderStatus',
+    width: 130
 
   },
   {
-    title: '科目',
-    dataIndex: 'subject',
-    key: "subject",
-    width: 110
+    title: '办理内容',
+    dataIndex: 'handleContent',
+    key: "handleContent",
+    width: 150
   },
   {
-    title: '日程类型',
-    dataIndex: 'scheduleType',
-    key: "scheduleType",
-    width: 140
+    title: '订单销售员',
+    dataIndex: 'orderSalesperson',
+    key: "orderSalesperson",
+    width: 130
   },
   {
-    title: '学员身份',
-    dataIndex: 'studentId',
-    key: "studentId",
-    width: 140
+    title: '经办人',
+    dataIndex: 'handledBy',
+    key: "handledBy",
+    width: 130
   },
   {
-    title: '上课状态',
-    dataIndex: 'classStatus',
-    key: "classStatus",
-    width: 120
+    title: '经办日期',
+    dataIndex: 'handledDate',
+    key: "handledDate",
+    width: 130
 
   },
   {
-    title: '扣费课程账户',
-    dataIndex: 'deductionAccount',
-    key: "deductionAccount",
-    width: 160
-
-  },
-  {
-    title: '课消方式',
-    key: 'courseNotMethod',
-    dataIndex: 'courseNotMethod',
-    width: 110
-  },
-  {
-    title: '上课点名数量',
-    dataIndex: 'classCallNum',
-    key: "classCallNum",
+    title: '订单创建时间',
+    dataIndex: 'createTime',
+    key: "createTime",
     width: 160
   },
   {
-    title: '消耗数量',
-    dataIndex: 'useNum',
-    key: "useNum",
+    title: '储值账户变动',
+    key: 'accountChanges',
+    dataIndex: 'accountChanges',
+    width: 200
+  },
+  {
+    title: '优惠',
+    dataIndex: 'discount',
+    key: "discount",
+    width: 100
+  },
+  {
+    title: '整单优惠',
+    dataIndex: 'wholeOrderDiscount',
+    key: "wholeOrderDiscount",
+    width: 100
+  },
+  {
+    title: '应收/应退(元)',
+    dataIndex: 'shouldPutRefund',
+    key: "shouldPutRefund",
     width: 140
   },
   {
-    title: '拖欠数量',
-    dataIndex: 'oweNum',
-    key: "oweNum",
+    title: '实收/实退(元)',
+    dataIndex: 'solidPutRefund',
+    key: "solidPutRefund",
     width: 140
   },
   {
-    title: '消耗学费',
-    dataIndex: 'usePrice',
-    key: "usePrice",
-    width: 140
-  },
-  {
-    title: '上课老师',
-    dataIndex: 'mainTeacher',
-    key: "mainTeacher",
-    width: 140
-  },
-  {
-    title: '上课助教',
-    dataIndex: 'subTeacher',
-    key: "subTeacher",
-    width: 140
-  },
-  {
-    title: '点名更新时间',
-    key: "callupdateTime",
-    dataIndex: 'callupdateTime',
-    width: 200,
-  },
-  {
-    title: '对内备注',
-    dataIndex: 'externalRemarks',
-    key: 'externalRemarks',
-    width: 140,
-  },
-  {
-    title: '对外备注',
-    dataIndex: 'remarks',
-    key: 'remarks',
-    width: 140,
+    title: '欠费金额(元)',
+    dataIndex: 'owePrice',
+    key: "owePrice",
+    width: 100
   },
   {
     title: '操作',
@@ -262,14 +271,10 @@ const allColumns = ref([
     required: true
   },
 ])
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-};
+
 const defaultStudentStatus = ref(1)
 // 从本地存储读取已保存的列配置
-const savedSelected = localStorage.getItem('student-latitude');
+const savedSelected = localStorage.getItem('order-record-list');
 const keysArray = allColumns.value
   .map(column => column?.key) // 可选链操作符
   .filter(key => typeof key !== 'undefined'); // 过滤未定义的值
@@ -321,12 +326,20 @@ watch(selectedValues, (newVal) => {
 }, { deep: true });
 // 自动保存列配置到本地存储
 watch(selectedValues, (newVal) => {
-  localStorage.setItem('student-latitude', JSON.stringify(newVal));
+  localStorage.setItem('order-record-list', JSON.stringify(newVal));
 }, { deep: true });
 // 表格总宽度计算
 const totalWidth = computed(() =>
   filteredColumns.value.reduce((acc, column) => acc + (column.width || 0), 0)
 );
+const openDrawer = ref(false)
+const handleSeeStuData = () => {
+  openDrawer.value = true
+}
+const openOrderDetailDrawer = ref(false)
+const handleOrderDetail = () => {
+  openOrderDetailDrawer.value = true
+}
 </script>
 
 <style lang="less" scoped>

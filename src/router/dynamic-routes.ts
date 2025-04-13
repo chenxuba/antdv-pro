@@ -316,9 +316,9 @@ export default [
     ],
   },
   {
-    path: '/form2',
-    redirect: '/form/basic1',
-    name: 'Form1',
+    path: '/finance-center',
+    redirect: '/finance-center/order-list',
+    name: 'FinanceCenter',
     meta: {
       title: '财务中心',
       icon: 'FormOutlined',
@@ -326,9 +326,9 @@ export default [
     component: basicRouteMap.RouteView,
     children: [
       {
-        path: '/form/basic1',
-        name: 'Basic1',
-        component: () => import('~/pages/form/basic-form/index.vue'),
+        path: '/finance-center/order-list',
+        name: 'OrderList',
+        component: () => import('~/pages/finance-center/order-list.vue'),
         meta: {
           title: '订单管理',
         },
