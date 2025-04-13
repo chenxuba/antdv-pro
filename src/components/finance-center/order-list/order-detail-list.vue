@@ -52,11 +52,11 @@
 
                 <a-tooltip>
                   <template #title>查看学员档案</template>
-                  <div class="flex cursor-pointer py5.5  flex-items-center h-4 w-30" @click="handleSeeStuData()">
-                    <img width="36" height="36" class="mr-2" style="border-radius: 100%;"
+                  <div class="flex cursor-pointer   " @click="handleSeeStuData()">
+                    <img width="36" height="36" class="mr-0" style="border-radius: 100%;"
                       src="https://cdn.schoolpal.cn/schoolpal/next-erp/avator_male.png?x-oss-process=image/resize,w_120"
                       alt="">
-                    <div class="name mt-1">
+                    <div class="name">
                       <div class="text-#222">龙龙{{ record.a }}</div>
                       <div class="text-3 text-#888 flex flex-items-center">176****1636</div>
                     </div>

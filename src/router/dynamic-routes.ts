@@ -334,9 +334,9 @@ export default [
         },
       },
       {
-        path: '/form/basic2',
-        name: 'Basic2',
-        component: () => import('~/pages/form/basic-form/index.vue'),
+        path: '/finance-center/approve-management',
+        name: 'ApproveManagement',
+        component: () => import('~/pages/finance-center/approve-management.vue'),
         meta: {
           title: '审批管理',
         },

@@ -2,6 +2,7 @@
 import { ref, nextTick, toRaw, onBeforeUnmount } from 'vue';
 import { DeleteOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import { debounce } from 'lodash-es';
+import dayjs from 'dayjs';
 // 配置参数
 const DEBOUNCE_TIME = 500; // 防抖时间（毫秒）
 // 实时响应的中间值（用于v-model绑定）
@@ -26,6 +27,10 @@ const props = defineProps({
     type: Number,
     default: null
   },
+  defaultCreateTimeVals: {
+    type: Array,
+    default: () => { return [] }
+  },
   defaultOrNotFenClass: {
     type: Array,
     default: () => { return [] }
@@ -47,6 +52,10 @@ const props = defineProps({
     default: false
   },
   isQuickShow: {
+    type: Boolean,
+    default: false
+  },
+  isApproveQuickShow: {
     type: Boolean,
     default: false
   },
@@ -307,6 +316,10 @@ const quickOneToOneFilters = ref([
   { id: 1, name: "未分配班主任学员", count: 1, selected: false },
   { id: 2, name: "待排课学员", count: 0, selected: false },
 ]);
+const quickApproveFilters = ref([
+{ id: 1, name: "待我审批", count: 1, selected: false },
+{ id: 2, name: "我已审批", count: 10, selected: false },
+])
 // 处理快捷筛选单选
 const selectQuickFilter = (selectedFilter, type) => {
   if (type == 1) {
@@ -319,6 +332,11 @@ const selectQuickFilter = (selectedFilter, type) => {
       filter.selected = filter.id === selectedFilter.id ? !filter.selected : false;
     });
     console.log('当前快捷筛选:', quickOneToOneFilters.value.find(q => q.selected)?.name);
+  } else if (type == 3) {
+    quickApproveFilters.value.forEach(filter => {
+      filter.selected = filter.id === selectedFilter.id ? !filter.selected : false;
+    });
+    console.log('当前快捷筛选:', quickApproveFilters.value.find(q => q.selected)?.name);
   }
 };
 
@@ -436,6 +454,12 @@ const selectedConditions = computed(() => {
       values: quickOneToOneFilters.value.filter(q => q.selected).map(q => ({ id: q.id, value: q.name }))
     },
     {
+      type: 'quickApprove',
+      label: '快捷筛选',
+      show: true,
+      values: quickApproveFilters.value.filter(q => q.selected).map(q => ({ id: q.id, value: q.name }))
+    },
+    {
       type: 'teacherSelect',
       label: teacherType==1?'上课老师':"上课助教",
       show: true,
@@ -513,6 +537,17 @@ const selectedConditions = computed(() => {
       type: 'createTime',
       label: '创建时间',
       show: props.displayArray.includes('createTime'),
+      values: createTimeVals.value.length === 2
+        ? [{
+          id: 'dateRange',
+          value: `${createTimeVals.value[0]} 至 ${createTimeVals.value[1]}`
+        }]
+        : []
+    },
+    {
+      type: 'applyTime',
+      label: '申请时间',
+      show: props.displayArray.includes('applyTime'),
       values: createTimeVals.value.length === 2
         ? [{
           id: 'dateRange',
@@ -649,6 +684,7 @@ watch(classStopTimeVals, () => lastUpdated.classStopTime = Date.now());
 watch(selectCourseValues, () => lastUpdated.intentionCourse = Date.now());
 watch(() => quickFilters.value.map(q => q.selected), () => lastUpdated.quick = Date.now(), { deep: true });
 watch(() => quickOneToOneFilters.value.map(q => q.selected), () => lastUpdated.quickOneToOne = Date.now(), { deep: true });
+watch(() => quickApproveFilters.value.map(q => q.selected), () => lastUpdated.quickApprove = Date.now(), { deep: true });
 watch(selectStuVals, () => lastUpdated.reference = Date.now());
 watch(selectSubjectVals, () => lastUpdated.subject = Date.now());
 watch(selectCourseCategoryVals, () => lastUpdated.courseCategory = Date.now());
@@ -690,6 +726,7 @@ const clearAll = () => {
   // 重置单选类
   quickFilters.value.forEach(q => q.selected = false);
   quickOneToOneFilters.value.forEach(q => q.selected = false);
+  quickApproveFilters.value.forEach(q => q.selected = false);
   createPeoVals.value = null;
   selectCourseValues.value = null;
   selectStuVals.value = null;
@@ -755,6 +792,10 @@ const removeCondition = (type, id) => {
     case 'quickOneToOne':
       const filterOneToOne = quickOneToOneFilters.value.find(q => q.id === id);
       if (filterOneToOne) filterOneToOne.selected = false;
+      break;
+      case 'quickApprove':
+      const filterApprove = quickApproveFilters.value.find(q => q.id === id);
+      if (filterApprove) filterApprove.selected = false;
       break;
     case 'createPeo':  // 新增创建人移除逻辑
       createPeoVals.value = null;
@@ -836,6 +877,9 @@ onMounted(() => {
   if (props.defaultOrNotFenClass) {
     selectOrNotFenClassVals.value = props.defaultOrNotFenClass;
   }
+  if (props.defaultCreateTimeVals) {
+    createTimeVals.value = props.defaultCreateTimeVals;
+  }
   if (props.defaultOpenClassStatus) {
     selectOpenClassStatusVals.value = props.defaultOpenClassStatus;
   }
@@ -870,6 +914,15 @@ const changeTeacherType = ()=>{
           <div class="quick-filters">
             <a-button v-for="filter in quickOneToOneFilters" :key="filter.id"
               :type="filter.selected ? 'primary' : 'default'" class="filter-btn" @click="selectQuickFilter(filter, 2)">
+              {{ filter.name }}（{{ filter.count }}）
+            </a-button>
+          </div>
+        </div>
+        <div class="filter-section mb-2 flex-1" v-if="isApproveQuickShow">
+          <span class="section-title mt-0.5">快捷筛选：</span>
+          <div class="quick-filters">
+            <a-button v-for="filter in quickApproveFilters" :key="filter.id"
+              :type="filter.selected ? 'primary' : 'default'" class="filter-btn" @click="selectQuickFilter(filter, 3)">
               {{ filter.name }}（{{ filter.count }}）
             </a-button>
           </div>
@@ -941,6 +994,8 @@ const changeTeacherType = ()=>{
               label="创建人" @radioChange="handleCreatePeoChange" type="radio" />
             <checkbox-filter v-if="displayArray.includes('createTime')" v-model:checkedValues="createTimeVals"
               label="创建时间" @datePickerChange="handleCreateTimeChange" type="dateTime" />
+              <checkbox-filter v-if="displayArray.includes('applyTime')" v-model:checkedValues="createTimeVals"
+              label="申请时间" @datePickerChange="handleCreateTimeChange" type="dateTime" />
             <checkbox-filter v-if="displayArray.includes('classEndingTime')" v-model:checkedValues="classEndingTimeVals"
               label="结课时间" @datePickerChange="handleCreateTimeChange" type="dateTimeQuick" />
             <checkbox-filter v-if="displayArray.includes('classStopTime')" v-model:checkedValues="classStopTimeVals"
@@ -1014,7 +1069,7 @@ const changeTeacherType = ()=>{
             </div>
           </div>
         </div>
-        <div class="w-100 mt--0.5" v-if="isShowSearchStuPhonefilter">
+        <div class="w-100 mt--1" v-if="isShowSearchStuPhonefilter">
           <div class="selectBox flex ">
             <div class="label">学员/电话</div>
             <div>

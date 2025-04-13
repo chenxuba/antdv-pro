@@ -2,141 +2,83 @@
   <div>
     <!-- 学员筛选条件 -->
     <div class="filter-wrap bg-white  pl-3 pr-3 rounded-lb-4 rounded-rb-4">
-      <all-filter :defaultStudentStatus="defaultStudentStatus" :displayArray="displayArray"
-        :is-quick-show="false"></all-filter>
+      <all-filter  :displayArray="displayArray" :defaultCreateTimeVals="defaultCreateTimeVals"
+        :is-approve-quick-show="true" :is-show-search-stu-phone="true"></all-filter>
     </div>
     <div class="student-list mt-3 pt-3 pb-3 pl-6 pr-6 bg-white rounded-4">
       <div class="tab-table">
         <div class="table-title flex justify-between">
-          <div class="total">共 {{ dataSource.length }} 条订单 ，实收总计 10438 元，共欠费 100 元</div>
+          <div class="total">当前共计 {{ dataSource.length }} 条审批</div>
           <div class="edit flex">
-            <a-dropdown class="mr-2">
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item key="0">
-                    导入学员订单
-                  </a-menu-item>
-                  <a-menu-item key="1">
-                    批量导出
-                  </a-menu-item>
-                  <a-menu-item key="3">
-                    导出记录
-                  </a-menu-item>
-                </a-menu>
-              </template>
+            <a-space>
               <a-button>
-                导入/导出学员订单
-                <DownOutlined :style="{ fontSize: '10px' }" />
+                配置审批规则
               </a-button>
-            </a-dropdown>
+              <a-button>
+                导出数据
+              </a-button>
+            </a-space>
             <!-- 自定义字段 -->
-            <customize-code v-model:checkedValues="selectedValues" :options="columnOptions"
-              :total="allColumns.length - 1" :num="selectedValues.length - 1" />
+            <!-- <customize-code v-model:checkedValues="selectedValues" :options="columnOptions"
+              :total="allColumns.length - 1" :num="selectedValues.length - 1" /> -->
           </div>
         </div>
         <div class="table-content mt-2">
           <a-table :dataSource="dataSource" :pagination="dataSource.length > 10" :columns="filteredColumns"
             :scroll="{ x: totalWidth }" size="small">
-            <!-- <template #headerCell="{ column }">
-              <template v-if="column.key === 'studentStatus'">
-                <span class="mr-1">{{ column.title }}</span>
-                <a-tooltip color="#666">
-                  <template #title>在读学员：当前报读课程有一门或多门课程有剩余课时/天数/金额的学员。
-                    历史学员：报读课程中全部课程都已结课的学员。</template>
-                  <ExclamationCircleOutlined />
-                </a-tooltip>
-              </template>
-            </template> -->
             <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'approveNum'">
+                <span class="text-#06f flex-center justify-start cursor-pointer"
+                  @click="handleOrderDetail()">20250410144858420324570
+                </span>
+              </template>
               <template v-if="column.key === 'name'">
-
                 <a-tooltip>
                   <template #title>查看学员档案</template>
-                  <div class="flex cursor-pointer  " @click="handleSeeStuData()">
-                    <img width="36" height="36"  style="border-radius: 100%;"
+                  <div class="flex cursor-pointer  hover " @click="handleSeeStuData()">
+                    <img width="36" height="36" class="mr-0" style="border-radius: 100%;"
                       src="https://cdn.schoolpal.cn/schoolpal/next-erp/avator_male.png?x-oss-process=image/resize,w_120"
                       alt="">
                     <div class="name ">
-                      <div class="text-#222">龙龙{{ record.a }}</div>
+                      <div class="text-#222 name">龙龙{{ record.a }}</div>
                       <div class="text-3 text-#888 flex flex-items-center">176****1636</div>
                     </div>
                   </div>
                 </a-tooltip>
               </template>
               <template v-if="column.key === 'orderNum'">
-                <span class="text-#06f flex-center justify-start cursor-pointer"
-                  @click="handleOrderDetail()">20250410144858420324570 {{ record.a }}
-                  <a-tooltip>
-                    <template #title>订单欠费未缴清</template>
-                    <span
-                      class="w-5 h-5 block text-red bg-#FBE7E6 text-3 ml-1 text-center line-height-5 rounded-1">欠</span>
-                  </a-tooltip>
-                </span>
+                <clamped-text class="text-#06f cursor-pointer" @click="handleOrderDetail()" :lines="1" text="20250410144858420324570"></clamped-text>
               </template>
-              <template v-else-if="column.key === 'orderType'">
-                {{ ['新订单', '续费订单', '转课订单'][Math.floor(Math.random() * 3)] }}
+              <template v-if="column.key === 'createUser'">
+                龙钊
               </template>
-
-              <template v-else-if="column.key === 'orderForm'">
-                {{ ['官网', '小程序', '线下'][Math.floor(Math.random() * 3)] }}
+              <template v-if="column.key === 'currentApprovePeo'">
+                <a-tooltip>
+                  <template #title>查看各级审批人</template>
+                  <div class="hover-text-#06f cursor-pointer">
+                  <span class="mr-1">龙钊、高胜</span>
+                  <QuestionCircleOutlined />
+                </div>
+                </a-tooltip>
+                
               </template>
-
-              <template v-else-if="column.key === 'orderTag'">
-                {{ ['普通', '紧急', 'VIP'][Math.floor(Math.random() * 3)] }}
+              <template v-if="column.key === 'approveStatus'">
+                <div class="flex flex-items-center">
+                  <span class="dot"></span>
+                <span>审批通过</span>
+                </div>
               </template>
-
-              <template v-else-if="column.key === 'orderStatus'">
-                {{ ['待支付', '已完成', '已取消'][Math.floor(Math.random() * 3)] }}
+              <template v-if="column.key === 'approveType'">
+                报名订单
               </template>
-
-              <template v-else-if="column.key === 'handleContent'">
-                {{ ['课程购买', '退费处理', '转班操作'][Math.floor(Math.random() * 3)] }}
+              <template v-if="column.key === 'approveOverTime'">
+                2025-04-13 13:50
               </template>
-
-              <template v-else-if="column.key === 'orderSalesperson'">
-                销售{{ ['王', '李', '陈'][Math.floor(Math.random() * 3)] }}经理
+              <template v-if="column.key === 'createTime'">
+                2025-04-13 13:50
               </template>
-
-              <template v-else-if="column.key === 'handledBy'">
-                经办人{{ ['张', '刘', '周'][Math.floor(Math.random() * 3)] }}
-              </template>
-
-              <template v-else-if="column.key === 'handledDate'">
-                {{ `2024-06-${15 + Math.floor(Math.random() * 3)}` }}
-              </template>
-
-              <template v-else-if="column.key === 'createTime'">
-                {{ `2024-06-${15 + Math.floor(Math.random() * 3)} 14:30` }}
-              </template>
-
-              <template v-else-if="column.key === 'accountChanges'">
-                <div>充值金额 <span class="text-#ff3333 font-800">-300.00</span></div>
-                <div>赠送金额 <span class="text-#ff3333 font-800">-0.00</span> </div>
-              </template>
-
-              <template v-else-if="column.key === 'discount'">
-                -
-              </template>
-
-              <template v-else-if="column.key === 'wholeOrderDiscount'">
-                <span class="font-800">0.00</span>
-              </template>
-
-              <template v-else-if="column.key === 'shouldPutRefund'">
-                <span class="font-800">+1000.00</span>
-              </template>
-
-              <template v-else-if="column.key === 'solidPutRefund'">
-                <div class="text-#222 font-800">+3000.00</div>
-                <div class="text-#888">共1件商品</div>
-              </template>
-
-              <template v-else-if="column.key === 'owePrice'">
-                <div><span class="text-#ff3333 font-800">300.00</span></div>
-              </template>
-
               <template v-if="column.key === 'action'">
-                <a href="#">查看收据</a>
+                <a href="#">查看/处理</a>
               </template>
             </template>
           </a-table>
@@ -149,132 +91,80 @@
 </template>
 
 <script setup>
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
-const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'createTime', 'intentionCourse', 'reference', 'studentStatus', 'classEndingTime', 'classStopTime'])
+import { DownOutlined, ExclamationCircleOutlined,QuestionCircleOutlined } from '@ant-design/icons-vue';
+const displayArray = ref(['intention', 'followStatus', 'sex', 'createPeo', 'applyTime', 'intentionCourse', 'reference', 'studentStatus', 'classEndingTime', 'classStopTime'])
 const dataSource = ref([{ key: 1 }, { key: 2 }])
+const defaultCreateTimeVals = ref(['2025-04-01','2025-04-13'])
 const allColumns = ref([
+  {
+    title: '审批编号',
+    dataIndex: 'approveNum',
+    key: "approveNum",
+    width: 210,
+    fixed: 'left',
+    required: true // 新增必选标识
+  },
+  {
+    title: '申请人',
+    dataIndex: 'createUser',
+    key: 'createUser',
+    width: 100,
+  },
   {
     title: '订单编号',
     dataIndex: 'orderNum',
     key: "orderNum",
-    fixed: 'left',
-    width: 250,
-    required: true // 新增必选标识
-
+    width: 210,
   },
+  
   {
-    title: '报名学员',
+    title: '学员/电话',
     dataIndex: 'name',
     key: 'name',
-    fixed: 'left',
-    width: 160,
-    required: true // 新增必选标识
+    width: 130,
   },
   {
-    title: '订单类型',
-    key: 'orderType',
-    dataIndex: 'orderType',
-    width: 130
+    title: '当前审批人',
+    dataIndex: 'currentApprovePeo',
+    key: 'currentApprovePeo',
+    width: 150,
   },
   {
-    title: '订单来源',
-    key: 'orderForm',
-    dataIndex: 'orderForm',
-    width: 130
+    title: '审批状态',
+    dataIndex: 'approveStatus',
+    key: 'approveStatus',
+    width: 120,
   },
   {
-    title: '订单标签',
-    key: 'orderTag',
-    dataIndex: 'orderTag',
-    width: 130
+    title: '审批类型',
+    dataIndex: 'approveType',
+    key: 'approveType',
+    width: 120,
   },
   {
-    title: '订单状态',
-    key: 'orderStatus',
-    dataIndex: 'orderStatus',
-    width: 130
-
+    title: '审批完成时间',
+    dataIndex: 'approveOverTime',
+    key: 'approveOverTime',
+    width: 150,
   },
   {
-    title: '办理内容',
-    dataIndex: 'handleContent',
-    key: "handleContent",
-    width: 150
-  },
-  {
-    title: '订单销售员',
-    dataIndex: 'orderSalesperson',
-    key: "orderSalesperson",
-    width: 130
-  },
-  {
-    title: '经办人',
-    dataIndex: 'handledBy',
-    key: "handledBy",
-    width: 130
-  },
-  {
-    title: '经办日期',
-    dataIndex: 'handledDate',
-    key: "handledDate",
-    width: 130
-
-  },
-  {
-    title: '订单创建时间',
+    title: '申请时间',
     dataIndex: 'createTime',
-    key: "createTime",
-    width: 160
-  },
-  {
-    title: '储值账户变动',
-    key: 'accountChanges',
-    dataIndex: 'accountChanges',
-    width: 200
-  },
-  {
-    title: '优惠',
-    dataIndex: 'discount',
-    key: "discount",
-    width: 100
-  },
-  {
-    title: '整单优惠',
-    dataIndex: 'wholeOrderDiscount',
-    key: "wholeOrderDiscount",
-    width: 100
-  },
-  {
-    title: '应收/应退(元)',
-    dataIndex: 'shouldPutRefund',
-    key: "shouldPutRefund",
-    width: 140
-  },
-  {
-    title: '实收/实退(元)',
-    dataIndex: 'solidPutRefund',
-    key: "solidPutRefund",
-    width: 140
-  },
-  {
-    title: '欠费金额(元)',
-    dataIndex: 'owePrice',
-    key: "owePrice",
-    width: 100
+    key: 'createTime',
+    width: 150,
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: "action",
     fixed: 'right',
-    width: 140,
+    width: 80,
     required: true
   },
 ])
 
-const defaultStudentStatus = ref(1)
 // 从本地存储读取已保存的列配置
-const savedSelected = localStorage.getItem('order-record-list');
+const savedSelected = localStorage.getItem('my-approve');
 const keysArray = allColumns.value
   .map(column => column?.key) // 可选链操作符
   .filter(key => typeof key !== 'undefined'); // 过滤未定义的值
@@ -326,7 +216,7 @@ watch(selectedValues, (newVal) => {
 }, { deep: true });
 // 自动保存列配置到本地存储
 watch(selectedValues, (newVal) => {
-  localStorage.setItem('order-record-list', JSON.stringify(newVal));
+  localStorage.setItem('my-approve', JSON.stringify(newVal));
 }, { deep: true });
 // 表格总宽度计算
 const totalWidth = computed(() =>
@@ -361,9 +251,6 @@ const handleOrderDetail = () => {
     width: 4px;
   }
 }
-
-.studentStatus {
-
   span.dot {
     border-radius: 50%;
     display: inline-block;
@@ -372,9 +259,8 @@ const handleOrderDetail = () => {
     vertical-align: middle;
     width: 6px;
     margin-right: 4px;
-    background: var(--pro-ant-color-primary);
+    background: #0c3;
   }
-}
 
 .tip {
   padding: 10px 24px 10px 14px;
@@ -399,6 +285,13 @@ const handleOrderDetail = () => {
     background: url(data:image/png;base64,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);
     background-size: contain;
     content: "";
+  }
+}
+.hover{
+  &:hover{
+    .name{
+      color: var(--pro-ant-color-primary);
+    }
   }
 }
 </style>

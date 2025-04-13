@@ -84,8 +84,19 @@
       <div v-if="checkedValues.length > 0" class="num">1</div>
       <DownOutlined v-else :style="{ fontSize: '10px' }" />
       <a-range-picker :key="pickerKey" @calendarChange="calendarChangeFun" value-format="YYYY-MM-DD"
-        :disabled-date="disabledDate" @change="handleRangePicker" popupClassName="picker-wrapper" :open="visible"
-        v-model:value="selectDates" />
+        :disabled-date="disabledDate" @change="handleRangePicker" popupClassName="picker-wrapper dateTimeQuick" :open="visible"
+        v-model:value="selectDates" :presets="rangePresetsNot">
+        <template #renderExtraFooter>
+          <div class="pl-3.5">
+            <a-tag color="pink">本周</a-tag>
+            <a-tag color="red">上周</a-tag>
+            <a-tag color="orange">本月</a-tag>
+            <a-tag color="green">上月</a-tag>
+            <a-tag color="cyan">截至昨日</a-tag>
+            <a-tag color="#e6f4ff" @click="resetPicker" class="cursor-pointer ml-8 reset-btn">重置</a-tag>
+          </div>
+        </template>
+      </a-range-picker>
     </a-button>
   </a-dropdown>
   <a-dropdown v-if="type == 'dateTimeQuick'" :trigger="['click']" v-model:open="visible" placement="bottomLeft"
@@ -161,6 +172,7 @@ const disabledDateBefore = (current) => {
   // 禁用条件：日期在 specifiedDate 之前 或 今天之后
   return currentDate < specifiedDate;
 };
+// 含未来时间
 const rangePresets = ref([
   {
     label: '本周',
@@ -189,6 +201,40 @@ const rangePresets = ref([
   {
     label: '截止今日',
     // 固定起始日期到当前日期（不含未来）
+    value: [dayjs('2020-01-01'), dayjs()]
+  }
+]);
+// 不含未来时间
+const rangePresetsNot = ref([
+{
+    label: '本周',
+    // 周一到当前时间（不含未来）
+    value: [dayjs().startOf('week'), dayjs()]
+  },
+  {
+    label: '本月',
+    // 本月1号到当前时间（不含未来）
+    value: [dayjs().startOf('month'), dayjs()]
+  },
+  {
+    label: '上周',
+    // 上周时间范围（自动排除未来，因上周已过去）
+    value: [
+      dayjs().subtract(1, 'week').startOf('week'),
+      dayjs().subtract(1, 'week').endOf('week')
+    ]
+  },
+  {
+    label: '上月',
+    // 上月时间范围（自动排除未来，因上月已过去）
+    value: [
+      dayjs().subtract(1, 'month').startOf('month'),
+      dayjs().subtract(1, 'month').endOf('month')
+    ]
+  },
+  {
+    label: '截止今日',
+    // 固定起始日期到当前时间（不含未来）
     value: [dayjs('2020-01-01'), dayjs()]
   }
 ]);
