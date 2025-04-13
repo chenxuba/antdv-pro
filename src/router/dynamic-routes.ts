@@ -366,9 +366,9 @@ export default [
         },
       },
       {
-        path: '/form/basic6',
-        name: 'Basic6',
-        component: () => import('~/pages/form/basic-form/index.vue'),
+        path: '/finance-center/bill-list.vue',
+        name: 'BillList',
+        component: () => import('~/pages/finance-center/bill-list.vue'),
         meta: {
           title: '账单管理',
         },
