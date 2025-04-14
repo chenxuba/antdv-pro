@@ -226,7 +226,7 @@ export default [
         name: 'TeacherCenter10',
         component: () => import('~/pages/exception/403.vue'),
         meta: {
-          title: '教案库',
+          title: '教案中心',
         },
       },
       {
@@ -374,33 +374,33 @@ export default [
         },
       },
       {
-        path: '/form/basic7',
-        name: 'Basic7',
-        component: () => import('~/pages/form/basic-form/index.vue'),
+        path: '/finance-center/payroll-list',
+        name: 'PayrollList',
+        component: () => import('~/pages/finance-center/payroll-list.vue'),
         meta: {
           title: '工资管理',
         },
       },
       {
-        path: '/form/basic8',
-        name: 'Basic8',
-        component: () => import('~/pages/form/basic-form/index.vue'),
+        path: '/finance-center/income-details',
+        name: 'IncomeDetails',
+        component: () => import('~/pages/finance-center/income-details.vue'),
         meta: {
           title: '确认收入明细',
         },
       },
       {
-        path: '/form/basic9',
-        name: 'Basic9',
-        component: () => import('~/pages/form/basic-form/index.vue'),
+        path: '/finance-center/tuition-change-record',
+        name: 'TuitionChangeRecord',
+        component: () => import('~/pages/finance-center/tuition-change-record.vue'),
         meta: {
           title: '学费变动记录',
         },
       },
       {
-        path: '/form/basic10',
-        name: 'Basic10',
-        component: () => import('~/pages/form/basic-form/index.vue'),
+        path: '/finance-center/recharge-account',
+        name: 'RechargeAccount',
+        component: () => import('~/pages/finance-center/recharge-account.vue'),
         meta: {
           title: '储值账户',
         },
